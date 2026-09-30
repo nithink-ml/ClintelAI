@@ -13,9 +13,11 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     API_V1_STR: str = "/api/v1"
 
-    # Security
+    # Security & Authentication
     SECRET_KEY: str = "insecure-dev-secret-key-change-me-in-production-minimum-32-chars"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1 day
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60  # 1 hour
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7  # 7 days
 
     # CORS
     CORS_ORIGINS: list[str] | str = ["http://localhost:3000", "http://127.0.0.1:3000"]
@@ -29,7 +31,9 @@ class Settings(BaseSettings):
         return v
 
     # Database URLs
-    DATABASE_URL: str = "postgresql+asyncpg://clintelai:clintelai_password@localhost:5432/clintelai_db"
+    DATABASE_URL: str = (
+        "postgresql+asyncpg://clintelai:clintelai_password@localhost:5432/clintelai_db"
+    )
     DATABASE_FALLBACK_URL: str = "sqlite+aiosqlite:///./clintelai_dev.db"
 
     # Redis
@@ -57,10 +61,7 @@ class Settings(BaseSettings):
     GOOGLE_MAPS_API_KEY: str = ""
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=True,
-        extra="ignore"
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
 
 

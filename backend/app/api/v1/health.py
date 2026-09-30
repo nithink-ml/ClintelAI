@@ -14,32 +14,29 @@ router = APIRouter()
     response_model=HealthResponse,
     status_code=status.HTTP_200_OK,
     summary="Comprehensive Service Health Check",
-    description="Returns the operational status of the core API, database connectivity, and subsystems."
+    description="Returns the operational status of the core API, database connectivity, and subsystems.",
 )
 async def get_health_status() -> HealthResponse:
     db_health = await check_db_health()
 
     services_status = {
-        "api": {
-            "status": "operational",
-            "version": settings.VERSION
-        },
+        "api": {"status": "operational", "version": settings.VERSION},
         "database": db_health,
         "redis": {
             "status": "configured",
             "url": settings.REDIS_URL,
-            "in_memory_fallback": settings.REDIS_FALLBACK_IN_MEMORY
+            "in_memory_fallback": settings.REDIS_FALLBACK_IN_MEMORY,
         },
         "llm_provider": {
             "status": "configured",
             "provider": settings.LLM_PROVIDER,
-            "mock_mode": settings.LLM_PROVIDER == "mock"
+            "mock_mode": settings.LLM_PROVIDER == "mock",
         },
         "vector_store": {
             "status": "configured",
             "type": settings.VECTOR_DB_TYPE,
-            "persist_dir": settings.CHROMA_PERSIST_DIR
-        }
+            "persist_dir": settings.CHROMA_PERSIST_DIR,
+        },
     }
 
     # Overall system status
@@ -50,5 +47,5 @@ async def get_health_status() -> HealthResponse:
         app_name=settings.PROJECT_NAME,
         version=settings.VERSION,
         environment=settings.ENVIRONMENT,
-        services=services_status
+        services=services_status,
     )

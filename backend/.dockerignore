@@ -1,0 +1,19 @@
+# Git and system
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.ruff_cache
+.venv
+venv
+env
+*.sqlite3

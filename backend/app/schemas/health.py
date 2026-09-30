@@ -7,7 +7,9 @@ from pydantic import BaseModel, Field
 
 
 class ServiceHealthDetail(BaseModel):
-    status: str = Field(..., description="Service status (e.g. connected, disconnected, operational)")
+    status: str = Field(
+        ..., description="Service status (e.g. connected, disconnected, operational)"
+    )
     engine: str | None = None
     note: str | None = None
     error: str | None = None

@@ -27,7 +27,7 @@ app = FastAPI(
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url=f"{settings.API_V1_STR}/docs",
     redoc_url=f"{settings.API_V1_STR}/redoc",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 # Cross-Origin Resource Sharing (CORS)
@@ -45,7 +45,7 @@ app.add_middleware(
     status_code=status.HTTP_200_OK,
     tags=["Root"],
     summary="Liveness Probe",
-    description="Minimal endpoint for container orchestrators and load balancers."
+    description="Minimal endpoint for container orchestrators and load balancers.",
 )
 async def liveness_probe():
     return {"status": "alive", "app": settings.PROJECT_NAME}

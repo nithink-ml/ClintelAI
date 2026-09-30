@@ -13,12 +13,7 @@ Base = declarative_base()
 
 # Primary Engine (PostgreSQL PostGIS in prod/docker, or SQLite in local dev)
 primary_url = settings.DATABASE_URL
-engine = create_async_engine(
-    primary_url,
-    echo=False,
-    future=True,
-    pool_pre_ping=True
-)
+engine = create_async_engine(primary_url, echo=False, future=True, pool_pre_ping=True)
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine,
@@ -47,7 +42,7 @@ async def check_db_health() -> dict:
             return {
                 "status": "connected" if val == 1 else "unhealthy",
                 "engine": engine.url.drivername,
-                "database": engine.url.database or "default"
+                "database": engine.url.database or "default",
             }
     except Exception as exc:  # noqa: BLE001
         logger.warning(f"Database health check failed on primary connection: {exc!s}")
@@ -55,5 +50,5 @@ async def check_db_health() -> dict:
             "status": "disconnected",
             "engine": engine.url.drivername,
             "error": str(exc),
-            "note": "Ensure Docker Compose is running ('docker compose up -d postgres') or configure DATABASE_FALLBACK_URL."
+            "note": "Ensure Docker Compose is running ('docker compose up -d postgres') or configure DATABASE_FALLBACK_URL.",
         }
