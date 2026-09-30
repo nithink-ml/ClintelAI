@@ -16,8 +16,19 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.PROJECT_NAME} v{settings.VERSION} [{settings.ENVIRONMENT}]")
     logger.info(f"Configured LLM Provider: {settings.LLM_PROVIDER}")
     logger.info(f"Configured Vector Store: {settings.VECTOR_DB_TYPE}")
+
+    # Initialize RAG knowledge ingestion and vector indexing
+    try:
+        from app.rag.pipeline import RAGPipeline
+
+        pipeline = RAGPipeline.get_instance()
+        await pipeline.initialize()
+    except Exception as e:
+        logger.error(f"Failed to eagerly initialize RAG pipeline during startup: {e}")
+
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}")
+
 
 
 app = FastAPI(

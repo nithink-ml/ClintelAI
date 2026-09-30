@@ -1,0 +1,46 @@
+[
+  {
+    "document_id": "PUBMED-31548210",
+    "title": "Clinical Decision Support and Risk Stratification for Acute Chest Pain in Primary Care: A Systematic Review",
+    "source_name": "PubMed / National Library of Medicine",
+    "authority_tier": "Tier 2: Peer-Reviewed Systematic Review",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/31548210/",
+    "published_date": "2020-04-15",
+    "last_reviewed_date": "2023-11-01",
+    "license": "Open Access / PubMed Central CC-BY",
+    "language": "en",
+    "domain": "cardiology",
+    "sections": [
+      {
+        "title": "Atypical vs Typical Presentations of Acute Coronary Syndrome",
+        "content": "Typical angina pectoris presents as retrosternal crushing, squeezing, or heavy chest pressure, often provoked by exertion or emotional stress and relieved by rest or nitroglycerin. Pain often radiates to the left arm, left shoulder, neck, or lower jaw. However, atypical presentations are common, particularly in elderly individuals, women, and individuals with diabetes mellitus. Atypical symptoms include isolated dyspnea, unexplained diaphoresis, epigastric discomfort, nausea, or profound fatigue without prominent chest pain."
+      },
+      {
+        "title": "Emergency Red Flags and Escalation Rules",
+        "content": "Any acute chest pain accompanied by radiation to jaw/neck/arm, diaphoresis, dyspnea, presyncope, hypotension, or tachycardia constitutes a medical emergency suspicious for Acute Myocardial Infarction (AMI) or Aortic Dissection. Patients must be advised to immediately call emergency medical services (112 / 108 in India) rather than driving themselves to an emergency department. Early administration of chewed aspirin (300-325 mg non-enteric coated) is recommended unless strictly contraindicated by active hemorrhage or known severe anaphylactic aspirin allergy."
+      }
+    ]
+  },
+  {
+    "document_id": "PUBMED-34210982",
+    "title": "Evidence-Based Management of Acute Dehydration and Oral Rehydration Therapy: Systematic Review and Meta-Analysis",
+    "source_name": "PubMed / National Library of Medicine",
+    "authority_tier": "Tier 2: Peer-Reviewed Systematic Review",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34210982/",
+    "published_date": "2021-08-10",
+    "last_reviewed_date": "2023-12-15",
+    "license": "Open Access / PubMed Central CC-BY",
+    "language": "en",
+    "domain": "gastroenterology",
+    "sections": [
+      {
+        "title": "Low-Osmolarity ORS and Zinc Clinical Efficacy",
+        "content": "Reduced-osmolarity Oral Rehydration Salts (ORS) formulation (245 mOsm/L) reduces stool output by 20% and vomiting by 30% compared to original WHO standard ORS in both children and adults with acute non-cholera diarrhea. Co-administration of elemental Zinc (20 mg/day for children >6 months, 10 mg/day for infants <6 months, for 10-14 days) significantly shortens diarrhea duration and reduces recurrence over the following 2-3 months. Antibiotics and anti-motility agents (such as loperamide) are contraindicated in acute infectious diarrhea with fever or dysentery, as they prolong bacterial shedding and increase toxic megacolon risk."
+      },
+      {
+        "title": "Severe Dehydration Signs Demanding Intravenous Fluid",
+        "content": "Oral rehydration is preferred for mild-to-moderate dehydration. However, signs of severe dehydration mandate immediate intravenous Ringer's Lactate resuscitation: sunken eyes, skin pinch retracting very slowly (>2 seconds), inability to drink or lethargy/unconsciousness, dry mucous membranes with absent tears, and anuria or severe oliguria."
+      }
+    ]
+  }
+]

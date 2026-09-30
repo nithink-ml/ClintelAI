@@ -1,10 +1,12 @@
 """Database session and engine initialization."""
 
+import sys
 from collections.abc import AsyncGenerator
 
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
+from sqlalchemy.pool import AsyncAdaptedQueuePool, NullPool
 
 from app.core.config import settings
 from app.core.logging import logger
@@ -13,7 +15,14 @@ Base = declarative_base()
 
 # Primary Engine (PostgreSQL PostGIS in prod/docker, or SQLite in local dev)
 primary_url = settings.DATABASE_URL
-engine = create_async_engine(primary_url, echo=False, future=True, pool_pre_ping=True)
+is_testing = "pytest" in sys.modules or any("pytest" in arg for arg in sys.argv)
+engine = create_async_engine(
+    primary_url,
+    echo=False,
+    future=True,
+    pool_pre_ping=True,
+    poolclass=NullPool if is_testing else AsyncAdaptedQueuePool,
+)
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine,
@@ -44,7 +53,7 @@ async def check_db_health() -> dict:
                 "engine": engine.url.drivername,
                 "database": engine.url.database or "default",
             }
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         logger.warning(f"Database health check failed on primary connection: {exc!s}")
         return {
             "status": "disconnected",

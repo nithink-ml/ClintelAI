@@ -1,0 +1,84 @@
+[
+  {
+    "document_id": "ICMR-DENGUE-STG-2023",
+    "title": "ICMR Standard Treatment Guidelines: Clinical Management of Dengue in India",
+    "source_name": "Indian Council of Medical Research",
+    "authority_tier": "Tier 1: National Health Research Agency (India)",
+    "url": "https://main.icmr.nic.in/content/standard-treatment-guidelines",
+    "published_date": "2023-06-15",
+    "last_reviewed_date": "2024-02-01",
+    "license": "Government of India Open Access / Public Health Guidance",
+    "language": "en",
+    "domain": "infectious_disease",
+    "sections": [
+      {
+        "title": "Epidemiology in Indian Context and Diagnosis",
+        "content": "In India, dengue is hyperendemic across urban, semi-urban, and rural districts with peak incidence during the post-monsoon months. Laboratory confirmation: NS1 antigen ELISA is recommended during days 1 to 5 of fever; IgM antibody ELISA is recommended from day 5 onwards. A complete blood count (CBC) with hematocrit and platelet count must be performed at baseline and monitored regularly during the transition to the critical phase."
+      },
+      {
+        "title": "Platelet Count Thresholds and Transfusion Warnings",
+        "content": "A common clinical misconception in India is the premature transfusion of platelets based solely on low platelet numbers. ICMR guidelines explicitly recommend against prophylactic platelet transfusions when the platelet count is >20,000/μL in the absence of significant clinical bleeding. Prophylactic transfusion does not prevent severe bleeding, does not hasten recovery, carries risks of transfusion-related acute lung injury (TRALI) and fluid overload, and exhausts blood bank supplies. Platelet transfusion is indicated primarily when platelet count is <10,000/μL or in the presence of active, systemic mucosal or internal bleeding."
+      },
+      {
+        "title": "Fluid Therapy and Hematocrit Monitoring",
+        "content": "The cornerstone of dengue management is tailored fluid therapy. Hematocrit serves as an objective surrogate for plasma leakage. A rising hematocrit (>20% increase from baseline) indicates significant plasma leakage and hemoconcentration, necessitating prompt isotonic crystalloid replacement (Normal Saline 0.9% or Ringer's Lactate). Overzealous fluid administration must be avoided during the recovery phase to prevent pulmonary edema."
+      },
+      {
+        "title": "Danger Signs and Immediate Referral Criteria",
+        "content": "Patients exhibiting any of the following must be immediately escalated to emergency secondary/tertiary facilities: cold, clammy extremities with feeble rapid pulse (dengue shock syndrome), postural hypotension, oliguria (urine output <0.5 mL/kg/h), sudden drop in temperature with clinical deterioration, persistent vomiting, or coffee-ground hematemesis/melena."
+      }
+    ]
+  },
+  {
+    "document_id": "ICMR-DIABETES-STG-2023",
+    "title": "ICMR Guidelines for Management of Type 2 Diabetes in South Asian Phenotypes",
+    "source_name": "Indian Council of Medical Research",
+    "authority_tier": "Tier 1: National Health Research Agency (India)",
+    "url": "https://main.icmr.nic.in/sites/default/files/guidelines/ICMR_GuidelinesType2Diabetes2023.pdf",
+    "published_date": "2023-04-10",
+    "last_reviewed_date": "2024-01-18",
+    "license": "Government of India Open Access / Public Health Guidance",
+    "language": "en",
+    "domain": "endocrinology",
+    "sections": [
+      {
+        "title": "The South Asian Diabetes Phenotype and Diagnostic Criteria",
+        "content": "Indians and South Asians have a unique phenotype ('Asian Indian Phenotype') characterized by high body fat percentage, increased visceral adiposity, higher insulin resistance, and lower skeletal muscle mass despite a normal or lower Body Mass Index (BMI). Screening should begin at age 30 or earlier in the presence of risk factors. Diagnosis: Fasting Plasma Glucose (FPG) ≥126 mg/dL (7.0 mmol/L), 2-hour post-load glucose during 75g OGTT ≥200 mg/dL (11.1 mmol/L), or HbA1c ≥6.5%."
+      },
+      {
+        "title": "Glycemic Targets and Pharmacotherapy",
+        "content": "The general glycemic target for non-pregnant adults with type 2 diabetes is HbA1c <7.0%, fasting glucose 80-130 mg/dL, and postprandial glucose <180 mg/dL. First-line pharmacotherapy in the absence of contraindications is Metformin, initiated with lifestyle intervention. In individuals with established cardiovascular disease, heart failure, or chronic kidney disease, SGLT2 inhibitors or GLP-1 receptor agonists with proven benefit are recommended as part of the regimen."
+      },
+      {
+        "title": "Dietary Principles and Physical Activity for Indian Diets",
+        "content": "Traditional Indian diets frequently derive >65-75% of calories from carbohydrates, predominantly refined grains (white rice, refined wheat flour). ICMR recommends reducing carbohydrate intake to 50-55% of total daily energy, increasing protein to 15-20% (through legumes, pulses, paneer, eggs, soy), and incorporating high dietary fiber (>30-40 g/day). Sedentary lifestyle must be counteracted with at least 150 minutes per week of brisk walking or moderate physical activity."
+      },
+      {
+        "title": "Hypoglycemia Emergency Recognition and Management",
+        "content": "Hypoglycemia (blood glucose <70 mg/dL) is an acute clinical risk, especially with sulfonylureas and insulin. Symptoms include trembling, diaphoresis, palpitations, anxiety, hunger, dizziness, and cognitive confusion. Immediate treatment is the 'Rule of 15': ingest 15 grams of fast-acting carbohydrate (3-4 glucose tablets, half glass of fruit juice, or 3 teaspoons of sugar dissolved in water), recheck blood glucose after 15 minutes, and repeat if still <70 mg/dL."
+      }
+    ]
+  },
+  {
+    "document_id": "ICMR-ARI-PNEUMONIA-2023",
+    "title": "ICMR Clinical Guidelines for Acute Respiratory Infections and Pneumonia",
+    "source_name": "Indian Council of Medical Research",
+    "authority_tier": "Tier 1: National Health Research Agency (India)",
+    "url": "https://main.icmr.nic.in/content/standard-treatment-guidelines",
+    "published_date": "2023-09-08",
+    "last_reviewed_date": "2024-02-12",
+    "license": "Government of India Open Access / Public Health Guidance",
+    "language": "en",
+    "domain": "pulmonology",
+    "sections": [
+      {
+        "title": "Clinical Stratification of Upper vs Lower Respiratory Infections",
+        "content": "Acute Upper Respiratory Infections (URI), including the common cold, viral pharyngitis, and rhinovirus infection, present with nasal congestion, rhinorrhea, sneezing, mild sore throat, and low-grade fever. Lower respiratory tract infections (LRTI) like pneumonia involve alveolar consolidation. Respiratory rate (tachypnea) is the single most sensitive physical examination sign for pneumonia: age >5 years / adults: >20 breaths/min; children 1-5 years: >40 breaths/min; infants 2-11 months: >50 breaths/min."
+      },
+      {
+        "title": "Red-Flag Symptoms Requiring Emergency Care",
+        "content": "Immediate emergency evaluation is indicated when any of the following signs appear: severe shortness of breath or inability to complete a full sentence without gasping; pulse oximetry SpO2 <93% on room air; cyanosis of lips or nail beds; stridor or grunting; chest indrawing; hemoptysis; confusion or lethargy; or new onset systolic blood pressure <90 mmHg (septic shock warning)."
+      }
+    ]
+  }
+]

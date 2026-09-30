@@ -1,0 +1,110 @@
+[
+  {
+    "document_id": "WHO-DENGUE-2023",
+    "title": "WHO Dengue and Severe Dengue Fact Sheet and Clinical Management",
+    "source_name": "World Health Organization",
+    "authority_tier": "Tier 1: Global Health Authority",
+    "url": "https://www.who.int/news-room/fact-sheets/detail/dengue-and-severe-dengue",
+    "published_date": "2023-03-17",
+    "last_reviewed_date": "2024-01-20",
+    "license": "CC BY-NC-SA 3.0 IGO",
+    "language": "en",
+    "domain": "infectious_disease",
+    "sections": [
+      {
+        "title": "Overview and Transmission",
+        "content": "Dengue is a viral infection transmitted to humans through the bite of infected female Aedes mosquitoes, principally Aedes aegypti and, to a lesser extent, Ae. albopictus. The disease is widespread throughout the tropics, with local variations in risk influenced by rainfall, temperature, relative humidity and rapid unplanned urbanization. Dengue is caused by four distinct serotypes of the virus (DENV-1, DENV-2, DENV-3, and DENV-4). Recovery from infection by one provides lifelong immunity against that particular serotype, but subsequent infections by other serotypes increase the risk of developing severe dengue."
+      },
+      {
+        "title": "Clinical Manifestations and Phases",
+        "content": "Most infections produce mild or flu-like symptoms. Dengue typically has three clinical phases: the febrile phase, critical phase, and recovery phase. Febrile phase: Characterized by sudden high-grade fever (40°C/104°F) lasting 2-7 days, accompanied by severe headache, retro-orbital eye pain, muscle and joint pains (breakbone fever), nausea, vomiting, swollen glands, and rash. Critical phase: Occurs around the time fever abates (usually days 3 to 7 of illness) and typically lasts 24 to 48 hours. During this phase, plasma leakage may occur due to increased capillary permeability."
+      },
+      {
+        "title": "Severe Dengue and Warning Signs",
+        "content": "Severe dengue is a potentially fatal complication due to plasma leakage, fluid accumulation, respiratory distress, severe bleeding, or organ impairment. Warning signs that require urgent emergency hospital admission include: severe abdominal pain or tenderness; persistent vomiting (at least 3 episodes in 24 hours); mucosal bleeding (gums, nose, gastrointestinal); rapid breathing or dyspnea; clinical fluid accumulation (ascites, pleural effusion); fatigue, restlessness, or altered mental status; liver enlargement >2 cm; and a rapid decrease in platelet count concurrent with an increase in hematocrit."
+      },
+      {
+        "title": "Evidence-Based Treatment and Critical Precautions",
+        "content": "There is no specific antiviral treatment for dengue fever. Management focuses on symptomatic relief and careful fluid maintenance. Acetaminophen (paracetamol) is the drug of choice for fever and pain relief. Strict precaution: Avoid Non-Steroidal Anti-Inflammatory Drugs (NSAIDs) such as ibuprofen, naproxen, aspirin, and diclofenac, as they inhibit platelet aggregation and dramatically increase the risk of gastrointestinal hemorrhage. Oral hydration therapy with oral rehydration salts (ORS), fruit juices, and electrolyte-rich fluids is vital during the febrile phase. Intravenous fluid resuscitation is indicated when warning signs or severe plasma leakage appear."
+      }
+    ]
+  },
+  {
+    "document_id": "WHO-HYPERTENSION-2023",
+    "title": "WHO Guideline for the Pharmacological Treatment of Hypertension in Adults",
+    "source_name": "World Health Organization",
+    "authority_tier": "Tier 1: Global Health Authority",
+    "url": "https://www.who.int/publications/i/item/9789240033986",
+    "published_date": "2023-08-25",
+    "last_reviewed_date": "2024-02-10",
+    "license": "CC BY-NC-SA 3.0 IGO",
+    "language": "en",
+    "domain": "cardiology",
+    "sections": [
+      {
+        "title": "Diagnostic Thresholds and Target Blood Pressure",
+        "content": "Hypertension is diagnosed when systolic blood pressure (SBP) is consistently ≥140 mmHg and/or diastolic blood pressure (DBP) is ≥90 mmHg measured on at least two separate clinical occasions. For individuals with confirmed cardiovascular disease or high risk, pharmacological treatment is recommended at SBP 130-139 mmHg. The target blood pressure for all adults with hypertension is <140/90 mmHg, and <130/80 mmHg in patients with high cardiovascular risk, diabetes mellitus, or chronic kidney disease."
+      },
+      {
+        "title": "First-Line Pharmacological Classes",
+        "content": "WHO recommends initiation of pharmacological antihypertensive treatment with any of the following three classes: thiazide or thiazide-like diuretics, angiotensin-converting enzyme inhibitors (ACEIs) or angiotensin receptor blockers (ARBs), and long-acting dihydropyridine calcium channel blockers (CCBs). Combination therapy with two complementary drug classes is recommended for initial treatment in adults with baseline blood pressure ≥20 mmHg above systolic target or ≥10 mmHg above diastolic target."
+      },
+      {
+        "title": "Lifestyle Modifications and Preventive Interventions",
+        "content": "Evidence-based non-pharmacological interventions are recommended for all patients: dietary sodium restriction to less than 2 grams per day (equivalent to 5 grams of table salt); increased dietary potassium consumption through fresh vegetables and legumes; regular aerobic physical activity (at least 150 minutes of moderate-intensity exercise weekly); weight reduction in overweight or obese patients; cessation of tobacco use; and moderation or elimination of alcohol intake."
+      },
+      {
+        "title": "Hypertensive Crises and Red Flags",
+        "content": "Hypertensive emergency is defined as severely elevated blood pressure (typically SBP >180 mmHg or DBP >120 mmHg) accompanied by acute, life-threatening target organ damage. Symptoms include acute chest pain, shortness of breath, acute neurological deficits (weakness, numbness, speech impairment), blurred vision, altered mental state, or seizures. This requires immediate emergency hospitalization and intravenous antihypertensive management."
+      }
+    ]
+  },
+  {
+    "document_id": "WHO-TUBERCULOSIS-2024",
+    "title": "WHO Tuberculosis Fact Sheet and Standard Treatment Protocols",
+    "source_name": "World Health Organization",
+    "authority_tier": "Tier 1: Global Health Authority",
+    "url": "https://www.who.int/news-room/fact-sheets/detail/tuberculosis",
+    "published_date": "2024-01-12",
+    "last_reviewed_date": "2024-03-01",
+    "license": "CC BY-NC-SA 3.0 IGO",
+    "language": "en",
+    "domain": "pulmonology",
+    "sections": [
+      {
+        "title": "Etiology, Transmission, and Vulnerable Populations",
+        "content": "Tuberculosis (TB) is an infectious bacterial disease caused by Mycobacterium tuberculosis. It most commonly affects the lungs (pulmonary TB) but can affect other sites (extrapulmonary TB). TB is spread through the air when people with pulmonary TB expel bacteria, for example by coughing, spitting, or sneezing. People with compromised immune systems, such as people living with HIV, malnutrition, or diabetes, or people who smoke tobacco, have a substantially higher risk of falling ill."
+      },
+      {
+        "title": "Cardinal Clinical Signs and Screening",
+        "content": "Common symptoms of active pulmonary tuberculosis include persistent cough lasting 2 weeks or more, coughing up blood or sputum (hemoptysis), chest pains, weakness, unintended weight loss, fever, and drenching night sweats. WHO strongly recommends rapid molecular diagnostic tests (such as Xpert MTB/RIF and Truenat) as the initial diagnostic test rather than sputum smear microscopy alone, because they simultaneously detect M. tuberculosis and rifampicin resistance."
+      },
+      {
+        "title": "Standard Treatment Regimen and Adherence",
+        "content": "Active, drug-susceptible TB disease is treated with a standard 6-month course of four antimicrobial drugs: 2 months of intensive phase with Isoniazid (H), Rifampicin (R), Pyrazinamide (Z), and Ethambutol (E), followed by a 4-month continuation phase with Isoniazid and Rifampicin (HR). Strict treatment adherence is essential to achieve cure and prevent the emergence of multidrug-resistant tuberculosis (MDR-TB). Incomplete or irregular treatment regimens are the primary driver of drug resistance."
+      }
+    ]
+  },
+  {
+    "document_id": "WHO-AMR-2023",
+    "title": "WHO Antimicrobial Resistance and Rational Antibiotic Use",
+    "source_name": "World Health Organization",
+    "authority_tier": "Tier 1: Global Health Authority",
+    "url": "https://www.who.int/news-room/fact-sheets/detail/antimicrobial-resistance",
+    "published_date": "2023-11-21",
+    "last_reviewed_date": "2024-02-15",
+    "license": "CC BY-NC-SA 3.0 IGO",
+    "language": "en",
+    "domain": "infectious_disease",
+    "sections": [
+      {
+        "title": "Mechanism and Drivers of Resistance",
+        "content": "Antimicrobial resistance (AMR) occurs when bacteria, viruses, fungi, and parasites change over time and no longer respond to medicines, making infections harder to treat and increasing the risk of disease spread, severe illness, and death. The primary driver of AMR is the misuse and overuse of antimicrobials in humans, animals, and agriculture, including the self-medication of antibiotics for viral illnesses such as the common cold, viral pharyngitis, and uncomplicated acute bronchitis."
+      },
+      {
+        "title": "Clinical Guidance on Viral vs Bacterial Illness",
+        "content": "Antibiotics do not treat viral infections including influenza, common cold, dengue, or uncomplicated viral gastroenteritis. Prescribing or consuming antibiotics for viral upper respiratory infections provides zero therapeutic benefit while exposing the patient to drug adverse events (such as Clostridioides difficile colitis, severe allergic reactions) and selecting for resistant flora. Antibiotics should strictly be initiated based on microbiological evidence or clinical signs strongly indicating bacterial etiology."
+      }
+    ]
+  }
+]

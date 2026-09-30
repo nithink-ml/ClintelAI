@@ -23,6 +23,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AlertBanner } from "@/components/ui/alert-banner";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/i18n/language-context";
+import { ClinicalAssistant } from "@/components/assistant/clinical-assistant";
 
 interface BackendHealthData {
   status: string;
@@ -147,6 +148,11 @@ export default function HomePage() {
             </button>
           ))}
         </div>
+      </section>
+
+      {/* Phase 2: Evidence-Grounded Clinical Retrieval Assistant */}
+      <section className="max-w-4xl mx-auto w-full">
+        <ClinicalAssistant />
       </section>
 
       {/* Core Architectural Pillars */}

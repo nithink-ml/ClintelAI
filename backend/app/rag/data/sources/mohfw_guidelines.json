@@ -1,0 +1,50 @@
+[
+  {
+    "document_id": "MOHFW-TB-NTEP-2024",
+    "title": "MoHFW National Tuberculosis Elimination Program (NTEP) Clinical Management Protocol",
+    "source_name": "Ministry of Health and Family Welfare, Govt. of India",
+    "authority_tier": "Tier 1: National Health Ministry (India)",
+    "url": "https://tbcindia.gov.in/index1.php?lang=1&level=1&sublinkid=4573&lid=3177",
+    "published_date": "2024-02-14",
+    "last_reviewed_date": "2024-03-05",
+    "license": "Government of India Open Access / Public Health Guidance",
+    "language": "en",
+    "domain": "pulmonology",
+    "sections": [
+      {
+        "title": "Diagnostic Algorithm and Free Public Diagnostics",
+        "content": "Under NTEP, any individual presenting with cough of 2 weeks or more, fever, night sweats, or unexplained weight loss is designated as a Presumptive TB case. Government primary health centers and district hospitals provide free molecular testing via Cartridge Based Nucleic Acid Amplification Test (CBNAAT / GeneXpert) or TrueNat. Chest radiography is integrated as a sensitive triage tool. Sputum smear microscopy is no longer the sole primary screening mechanism."
+      },
+      {
+        "title": "Daily Fixed-Dose Combination Regimens and Nikshay Notification",
+        "content": "India has transitioned entirely to daily Fixed Dose Combinations (FDCs) with weight-banded dosing instead of intermittent regimens. Intensive Phase (IP, 8 weeks): 4 drugs (Isoniazid, Rifampicin, Pyrazinamide, Ethambutol). Continuation Phase (CP, 16 weeks): 3 drugs (Isoniazid, Rifampicin, Ethambutol). Mandatory public notification: all TB cases diagnosed in private or public clinics must be registered on the national Ni-kshay digital portal (nikshay.in), unlocking nutritional direct-benefit transfer (Nikshay Poshan Yojana) of Rs 500 per month during active treatment."
+      },
+      {
+        "title": "Adverse Drug Reactions and Monitoring",
+        "content": "Patients taking anti-TB therapy must be educated on potential drug adverse reactions: orange/red-colored urine and tears (normal and harmless effect of Rifampicin); persistent nausea, jaundice, dark urine, or abdominal tenderness (signs of drug-induced hepatotoxicity requiring immediate LFT evaluation); vision blurring or loss of red-green color perception (Ethambutol optic neuritis - requires immediate discontinuation); and peripheral neuropathy (Isoniazid-induced, preventable with Pyridoxine/Vitamin B6 supplementation)."
+      }
+    ]
+  },
+  {
+    "document_id": "MOHFW-MATERNAL-EMERGENCY-2023",
+    "title": "MoHFW Guidelines on Obstetric and Neonatal Danger Signs and Emergency Referral",
+    "source_name": "Ministry of Health and Family Welfare, Govt. of India",
+    "authority_tier": "Tier 1: National Health Ministry (India)",
+    "url": "https://nhm.gov.in/index1.php?lang=1&level=2&sublinkid=823&lid=219",
+    "published_date": "2023-05-18",
+    "last_reviewed_date": "2024-01-10",
+    "license": "Government of India Open Access / Public Health Guidance",
+    "language": "en",
+    "domain": "obstetrics_gynecology",
+    "sections": [
+      {
+        "title": "Maternal Red-Flag Symptoms during Pregnancy and Labor",
+        "content": "Any pregnant or postpartum woman experiencing the following signs requires immediate emergency ambulance transfer (dial 108/102 in India) to a First Referral Unit (FRU): severe persistent headache with blurred vision, epigastric pain, or facial edema (severe pre-eclampsia / eclampsia impending seizures); sudden or heavy vaginal bleeding (antepartum or postpartum hemorrhage); high fever with foul-smelling vaginal discharge (puerperal sepsis); convulsions or loss of consciousness; and sudden onset of severe abdominal pain with uterine rigidity."
+      },
+      {
+        "title": "Neonatal Danger Signs",
+        "content": "Immediate emergency care is required for neonates (first 28 days of life) showing any of the following 7 danger signs: poor feeding or inability to suckle; convulsions or seizures; fast breathing (>60 breaths/min); severe chest indrawing; axillary temperature >37.5°C or hypothermia <35.5°C; lethargy, unconsciousness, or movement only when stimulated; and central cyanosis (blue discoloration of tongue and trunk) or severe jaundice within the first 24 hours of life."
+      }
+    ]
+  }
+]

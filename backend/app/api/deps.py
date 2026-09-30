@@ -74,14 +74,20 @@ async def get_current_user(
     return user
 
 
-def require_role(*allowed_roles: str):
+def require_role(*allowed_roles: str | list[str]):
     """Enforces role-based access control (RBAC)."""
+    flattened_roles: list[str] = []
+    for r in allowed_roles:
+        if isinstance(r, (list, tuple)):
+            flattened_roles.extend(r)
+        else:
+            flattened_roles.append(r)
 
     async def role_checker(current_user: User = Depends(get_current_user)) -> User:
-        if current_user.role not in allowed_roles:
+        if current_user.role not in flattened_roles:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Operation not permitted. Required role: {', '.join(allowed_roles)}",
+                detail=f"Operation not permitted. Required role: {', '.join(flattened_roles)}",
             )
         return current_user
 

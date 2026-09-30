@@ -52,7 +52,7 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: str = ""
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"
     RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-    RAG_SIMILARITY_THRESHOLD: float = 0.65
+    RAG_SIMILARITY_THRESHOLD: float = 0.45
     RAG_MAX_EVIDENCE_CHUNKS: int = 4
 
     # Maps
