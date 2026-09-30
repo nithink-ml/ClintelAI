@@ -1,0 +1,92 @@
+{
+  "_metadata": {
+    "dataset_type": "DEMO_SYNTHETIC_DATASET",
+    "is_demo_data": true,
+    "disclaimer": "CRITICAL NOTICE: These provider records are synthetic demo entries created strictly for testing and user-interface demonstration. None of these records represent actual medical appointments, guaranteed qualifications, or real-time availability. Do not use for emergency or clinical care.",
+    "version": "1.0.0",
+    "updated_at": "2026-09-29T00:00:00Z"
+  },
+  "providers": [
+    {
+      "id": "demo-prov-001",
+      "is_demo_data": true,
+      "name": "Dr. Ananya Sundaram, MD",
+      "specialty": "Internal Medicine",
+      "facility_name": "Apollo First Med Clinic (Demo Listing)",
+      "facility_type": "Clinic",
+      "verification_tier": "tier_1_verified",
+      "verification_status": "Officially Verified",
+      "verification_source": "State Medical Council Registry (Simulated Demo Record)",
+      "registration_number": "SMC-TN-84920-DEMO",
+      "registration_council": "Tamil Nadu Medical Council",
+      "verified_at": "2026-01-15T10:00:00Z",
+      "address": {
+        "street": "14 Cathedral Road",
+        "city": "Chennai",
+        "state": "Tamil Nadu",
+        "pincode": "600086",
+        "country": "India"
+      },
+      "location": {
+        "latitude": 13.0489,
+        "longitude": 80.2528
+      },
+      "phone": "+91 44 0000 0001 (Demo)",
+      "languages_spoken": ["English", "Tamil"]
+    },
+    {
+      "id": "demo-prov-002",
+      "is_demo_data": true,
+      "name": "City Community Health Center (Demo Listing)",
+      "specialty": "General Practice & Primary Care",
+      "facility_name": "City Community Health Center",
+      "facility_type": "Health Center",
+      "verification_tier": "tier_2_third_party",
+      "verification_status": "Third-Party Listing",
+      "verification_source": "OpenStreetMap Public Node #982341 (Demo Listing)",
+      "registration_number": null,
+      "registration_council": null,
+      "verified_at": null,
+      "address": {
+        "street": "88 Outer Ring Road, Bellandur",
+        "city": "Bengaluru",
+        "state": "Karnataka",
+        "pincode": "560103",
+        "country": "India"
+      },
+      "location": {
+        "latitude": 12.9279,
+        "longitude": 77.6771
+      },
+      "phone": "+91 80 0000 0002 (Demo)",
+      "languages_spoken": ["English", "Kannada", "Hindi"]
+    },
+    {
+      "id": "demo-prov-003",
+      "is_demo_data": true,
+      "name": "Green Cross Dispensary (Demo Listing)",
+      "specialty": "Pharmacy & Basic First Aid",
+      "facility_name": "Green Cross Dispensary",
+      "facility_type": "Dispensary",
+      "verification_tier": "tier_3_unverified",
+      "verification_status": "Unverified",
+      "verification_source": "Community Directory Submission (Unverified)",
+      "registration_number": null,
+      "registration_council": null,
+      "verified_at": null,
+      "address": {
+        "street": "21 MG Road",
+        "city": "Kochi",
+        "state": "Kerala",
+        "pincode": "682016",
+        "country": "India"
+      },
+      "location": {
+        "latitude": 9.9723,
+        "longitude": 76.2785
+      },
+      "phone": "+91 484 0000 0003 (Demo)",
+      "languages_spoken": ["English", "Malayalam"]
+    }
+  ]
+}

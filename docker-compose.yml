@@ -1,0 +1,117 @@
+services:
+  # ============================================================================
+  # PostgreSQL with PostGIS Spatial Extensions
+  # ============================================================================
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: clintelai_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-clintelai}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-clintelai_password}
+      POSTGRES_DB: ${POSTGRES_DB:-clintelai_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clintelai -d clintelai_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clintelai_network
+
+  # ============================================================================
+  # Redis Cache & Rate Limiter
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: clintelai_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - clintelai_network
+
+  # ============================================================================
+  # ChromaDB Vector Database
+  # ============================================================================
+  chromadb:
+    image: chromadb/chroma:0.5.5
+    container_name: clintelai_chroma
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - clintelai_network
+
+  # ============================================================================
+  # ClintelAI FastAPI Backend
+  # ============================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/backend.Dockerfile
+    container_name: clintelai_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env.example
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://clintelai:clintelai_password@postgres:5432/clintelai_db
+      - REDIS_URL=redis://redis:6379/0
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+    networks:
+      - clintelai_network
+
+  # ============================================================================
+  # ClintelAI Next.js Frontend
+  # ============================================================================
+  frontend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/frontend.Dockerfile
+    container_name: clintelai_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000/api/v1
+    networks:
+      - clintelai_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  chroma_data:
+    driver: local
+
+networks:
+  clintelai_network:
+    driver: bridge
