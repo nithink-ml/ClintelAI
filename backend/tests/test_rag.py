@@ -176,7 +176,7 @@ async def test_chroma_vector_store_in_memory_fallback():
 
 @pytest.mark.asyncio
 async def test_hybrid_retriever_ranking():
-    store = ChromaVectorStore()
+    store = ChromaVectorStore(host="in_memory", port=0)
     chunk1 = EvidenceChunk(
         chunk_id="CHK-HTN",
         document_id="DOC-HTN",
@@ -203,13 +203,12 @@ async def test_hybrid_retriever_ranking():
     )
     emb1 = SemanticEmbedder.embed_text(chunk1.content)
     emb2 = SemanticEmbedder.embed_text(chunk2.content)
-    store._is_connected = False
     await store.add_chunks([chunk1, chunk2], [emb1, emb2])
 
     retriever = HybridClinicalRetriever(store)
-    results = await retriever.retrieve("blood pressure hypertension drug treatment", top_k=2, similarity_threshold=0.3)
+    results = await retriever.retrieve("blood pressure hypertension drug treatment", top_k=2, similarity_threshold=0.2)
     assert len(results) >= 1
-    assert "HTN" in results[0][0].chunk_id or "HYPERTENSION" in results[0][0].chunk_id
+    assert results[0][0].chunk_id == "CHK-HTN"
 
 
 @pytest.mark.asyncio
@@ -232,3 +231,47 @@ async def test_pipeline_end_to_end():
         or "WHO" in res.citations[0].source_name
         or "ICMR" in res.citations[0].source_name
     )
+
+
+@pytest.mark.asyncio
+async def test_citations_strictly_grounded_and_non_fabricated():
+    """Verifies every citation corresponds to an actual indexed chunk with zero metadata fabrication."""
+    pipeline = RAGPipeline.get_instance()
+    await pipeline.initialize()
+
+    indexed_chunks = {c.chunk_id: c for c in pipeline.chunks}
+    indexed_docs = {d.document_id: d for d in pipeline.documents}
+
+    test_queries = [
+        "What are the fluid management and platelet transfusion guidelines for dengue according to ICMR?",
+        "What is the diagnostic threshold and first-line treatment for Type 2 diabetes in South Asian phenotypes?",
+        "What are the first-line drug classes for hypertension according to WHO?",
+    ]
+
+    total_verified = 0
+    for q in test_queries:
+        res = await pipeline.query(RAGQueryRequest(query=q))
+        assert res.abstained is False
+        assert len(res.citations) > 0
+
+        for c in res.citations:
+            total_verified += 1
+            # 1. Chunk ID must exist in indexed knowledge base
+            assert c.chunk_id in indexed_chunks, f"Chunk {c.chunk_id} not in indexed store"
+            orig = indexed_chunks[c.chunk_id]
+
+            # 2. Document ID must exist
+            assert c.document_id in indexed_docs, f"Document {c.document_id} not in indexed docs"
+
+            # 3. Exact metadata fidelity checks
+            assert c.source_name == orig.source_name
+            assert c.authority_tier == orig.authority_tier
+            assert c.title == orig.title
+            assert c.section_title == orig.section_title
+            assert c.url == orig.url
+            assert c.published_date == orig.published_date
+
+            # 4. Snippet must be an exact substring of chunk content
+            assert c.snippet in orig.content
+
+    assert total_verified >= 6

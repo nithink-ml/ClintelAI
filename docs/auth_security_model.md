@@ -11,7 +11,7 @@
 
 In ClintelAI's configuration, access tokens are configured with a 24-hour lifetime (`ACCESS_TOKEN_EXPIRE_MINUTES=1440` in `.env`, with default fallback of 60 minutes in application settings). Refresh tokens are configured with a 7-day lifetime (`REFRESH_TOKEN_EXPIRE_DAYS=7`).
 
-This document clarifies the rationale, details the operational threat model, and confirms why this token configuration is architecturally sound and appropriate for the current ClintelAI healthcare delivery context.
+This document clarifies the rationale, details the operational threat model, and describes the 24-hour token duration as a documented security and operational trade-off for the current architecture—balancing shift-length workflow continuity for frontline workers against token exposure risk—and not as a clinical safety determination.
 
 ---
 
@@ -50,10 +50,11 @@ Although JWT access tokens are signed statelessly via HMAC-SHA256 (`HS256`), eve
 ## 4. Architectural Decision & Confirmation
 
 **Conclusion:**  
-There is no concrete security defect or architectural regression introduced by the current 24-hour access token duration, because:
-1. Revocation is enforceable in real time via database user status verification (`is_active`).
-2. The platform requires shift-length uninterrupted continuity for healthcare practitioners and emergency citizen guidance.
+The 24-hour access-token duration is a documented security and operational trade-off:
+1. Revocation is enforceable in real time via database user status verification (`is_active` verified on every authenticated request).
+2. The operational trade-off favors shift-length uninterrupted continuity for healthcare practitioners and low-friction emergency citizen guidance over short token cycling.
 3. Refresh tokens are tracked with cryptographically unique UUIDs (`jti`) and role-based permissions (`role: user | doctor | admin`).
+4. This decision is strictly a software security/operational architecture trade-off for the current development phase, not a clinical safety determination.
 
 **Implementation Decision:**  
 Retain the current implementation as designed. For future production scaling with millions of concurrent users, a Redis-backed token denylist (using the `jti` claim) can be enabled to achieve sub-millisecond per-token revocation without altering the client token lifecycle.

@@ -31,8 +31,9 @@ def sanitize_query_for_audit(query: str) -> str:
     status_code=status.HTTP_200_OK,
     summary="Evidence-Grounded Clinical Query",
     description=(
-        "Retrieves verified clinical evidence from authoritative sources (WHO, ICMR, MoHFW, PubMed) "
-        "and generates a grounded response with structured inline citations and safety screening."
+        "Retrieves verified clinical evidence from indexed authoritative guideline datasets (WHO, ICMR, MoHFW, PubMed) "
+        "and generates a grounded response with structured inline citations and safety screening. "
+        "Note: Uses a curated, versioned guideline dataset, not a real-time medical feed."
     ),
 )
 async def query_clinical_knowledge(
