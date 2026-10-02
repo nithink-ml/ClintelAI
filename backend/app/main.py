@@ -26,6 +26,24 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Failed to eagerly initialize RAG pipeline during startup: {e}")
 
+    # Initialize Provider Seeder if database has no facilities yet
+    try:
+        from sqlalchemy import func, select
+
+        from app.db.session import AsyncSessionLocal
+        from app.models.provider import Facility
+        from app.providers.seeder import ProviderSeeder
+
+        async with AsyncSessionLocal() as session:
+            count_res = await session.execute(select(func.count(Facility.id)))
+            fac_count = count_res.scalar() or 0
+            if fac_count == 0:
+                logger.info("No healthcare providers detected in database. Seeding canonical Phase 3 providers...")
+                await ProviderSeeder.seed(db=session, force_reload=False)
+                logger.info("Phase 3 canonical providers seeded successfully.")
+    except Exception as e:
+        logger.warning(f"Provider seeder startup check skipped: {e}")
+
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}")
 

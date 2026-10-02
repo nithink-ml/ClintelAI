@@ -17,6 +17,8 @@ import {
   ArrowRight,
   ExternalLink,
   CheckCircle2,
+  MessageSquareHeart,
+  Stethoscope,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +26,7 @@ import { AlertBanner } from "@/components/ui/alert-banner";
 import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/i18n/language-context";
 import { ClinicalAssistant } from "@/components/assistant/clinical-assistant";
+import { ProviderDiscovery } from "@/components/providers/provider-discovery";
 
 interface BackendHealthData {
   status: string;
@@ -39,6 +42,7 @@ export default function HomePage() {
   const { user, isAuthenticated, setIsAuthModalOpen, setAuthModalMode, setIsProfileModalOpen } = useAuth();
   const { t, language, setLanguage, languages } = useLanguage();
 
+  const [activeTab, setActiveTab] = useState<"assistant" | "providers">("assistant");
   const [backendHealth, setBackendHealth] = useState<BackendHealthData | null>(null);
 
   useEffect(() => {
@@ -46,6 +50,21 @@ export default function HomePage() {
       .then((res) => res.json())
       .then((data) => setBackendHealth(data))
       .catch((err) => console.warn("Could not fetch backend health:", err));
+  }, []);
+
+  // Listen to hash changes for deep linking
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.replace("#", "");
+      if (hash === "providers" || hash === "doctorFinder") {
+        setActiveTab("providers");
+      } else if (hash === "assistant") {
+        setActiveTab("assistant");
+      }
+    };
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
   }, []);
 
   return (
@@ -150,14 +169,65 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Phase 2: Evidence-Grounded Clinical Retrieval Assistant */}
-      <section className="max-w-4xl mx-auto w-full">
-        <ClinicalAssistant />
+      {/* Interactive Tabs Header: Phase 2 Assistant & Phase 3 Provider Discovery */}
+      <section className="max-w-5xl mx-auto w-full space-y-6">
+        <div className="flex items-center justify-center p-1.5 bg-slate-100/90 backdrop-blur-xs rounded-2xl border border-slate-200/80 max-w-xl mx-auto shadow-xs">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("assistant");
+              window.location.hash = "assistant";
+            }}
+            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+              activeTab === "assistant"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <MessageSquareHeart className="w-4 h-4 text-blue-600 shrink-0" />
+            <span>{t.nav.assistant}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-mono">
+              Phase 2
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("providers");
+              window.location.hash = "providers";
+            }}
+            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+              activeTab === "providers"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <Stethoscope className="w-4 h-4 text-cyan-600 shrink-0" />
+            <span>{t.nav.doctorFinder}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-100 text-cyan-700 font-mono">
+              Phase 3
+            </span>
+          </button>
+        </div>
+
+        {/* Tab Panel Content */}
+        {activeTab === "assistant" ? (
+          <ClinicalAssistant />
+        ) : (
+          <ProviderDiscovery />
+        )}
       </section>
 
       {/* Core Architectural Pillars */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <Card className="hover:border-blue-300">
+        <Card
+          onClick={() => {
+            setActiveTab("assistant");
+            window.location.hash = "assistant";
+          }}
+          className="hover:border-blue-300 cursor-pointer transition-all hover:shadow-md"
+        >
           <CardHeader>
             <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-2">
               <FileCheck2 className="w-6 h-6" />
@@ -170,14 +240,20 @@ export default function HomePage() {
           <CardContent>
             <div className="flex items-center justify-between text-xs font-semibold text-blue-600 pt-2 border-t border-slate-100">
               <span>Citation Gate & Abstention</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                Phase 2
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
+                Active in Phase 2
               </span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="hover:border-cyan-300">
+        <Card
+          onClick={() => {
+            setActiveTab("providers");
+            window.location.hash = "providers";
+          }}
+          className="hover:border-cyan-300 cursor-pointer transition-all hover:shadow-md"
+        >
           <CardHeader>
             <div className="w-12 h-12 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center mb-2">
               <Search className="w-6 h-6" />
@@ -189,9 +265,9 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between text-xs font-semibold text-cyan-600 pt-2 border-t border-slate-100">
-              <span>Discovery ≠ Endorsement</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                Phase 3
+              <span>PostGIS Spatial Search</span>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 font-bold border border-cyan-200">
+                Active in Phase 3
               </span>
             </div>
           </CardContent>

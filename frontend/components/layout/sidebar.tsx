@@ -24,6 +24,13 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { isAuthenticated, setIsAuthModalOpen, setAuthModalMode, setIsProfileModalOpen } = useAuth();
   const { t } = useLanguage();
 
+  const handleNavigate = (hash: string) => {
+    if (typeof window !== "undefined") {
+      window.location.assign(hash);
+    }
+    if (onClose) onClose();
+  };
+
   const navItems = [
     {
       id: "home",
@@ -39,8 +46,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: <MessageSquareHeart className="w-4 h-4" />,
       active: false,
       phaseBadge: "Phase 2",
-      locked: true,
-      onClick: () => {},
+      locked: false,
+      onClick: () => handleNavigate("#assistant"),
     },
     {
       id: "doctorFinder",
@@ -48,8 +55,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: <Stethoscope className="w-4 h-4" />,
       active: false,
       phaseBadge: "Phase 3",
-      locked: true,
-      onClick: () => {},
+      locked: false,
+      onClick: () => handleNavigate("#providers"),
     },
     {
       id: "healthAlerts",

@@ -152,4 +152,215 @@ export const api = {
     request<{ detail: string }>(`/users/me/emergency-contacts/${id}`, {
       method: "DELETE",
     }, token),
+
+  // Phase 3: Provider Discovery & Verification
+  searchProviders: (params: {
+    query?: string;
+    lat?: number;
+    lon?: number;
+    radius_km?: number;
+    city?: string;
+    state?: string;
+    specialty?: string;
+    provider_type?: string;
+    verification_status?: string;
+    open_now?: boolean;
+    page?: number;
+    page_size?: number;
+    language?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params.query) searchParams.append("query", params.query);
+    if (params.lat !== undefined && params.lat !== null) searchParams.append("lat", params.lat.toString());
+    if (params.lon !== undefined && params.lon !== null) searchParams.append("lon", params.lon.toString());
+    if (params.radius_km !== undefined) searchParams.append("radius_km", params.radius_km.toString());
+    if (params.city) searchParams.append("city", params.city);
+    if (params.state) searchParams.append("state", params.state);
+    if (params.specialty) searchParams.append("specialty", params.specialty);
+    if (params.provider_type) searchParams.append("provider_type", params.provider_type);
+    if (params.verification_status) searchParams.append("verification_status", params.verification_status);
+    if (params.open_now !== undefined) searchParams.append("open_now", params.open_now.toString());
+    if (params.page) searchParams.append("page", params.page.toString());
+    if (params.page_size) searchParams.append("page_size", params.page_size.toString());
+    if (params.language) searchParams.append("language", params.language);
+
+    const queryStr = searchParams.toString();
+    return request<ApiProviderSearchResponse>(`/providers/search${queryStr ? `?${queryStr}` : ""}`, {
+      method: "GET",
+    });
+  },
+
+  getNearbyProviders: (params: {
+    lat: number;
+    lon: number;
+    radius_km?: number;
+    specialty?: string;
+    provider_type?: string;
+    page?: number;
+    page_size?: number;
+    language?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    searchParams.append("lat", params.lat.toString());
+    searchParams.append("lon", params.lon.toString());
+    if (params.radius_km) searchParams.append("radius_km", params.radius_km.toString());
+    if (params.specialty) searchParams.append("specialty", params.specialty);
+    if (params.provider_type) searchParams.append("provider_type", params.provider_type);
+    if (params.page) searchParams.append("page", params.page.toString());
+    if (params.page_size) searchParams.append("page_size", params.page_size.toString());
+    if (params.language) searchParams.append("language", params.language);
+
+    return request<ApiProviderSearchResponse>(`/providers/nearby?${searchParams.toString()}`, {
+      method: "GET",
+    });
+  },
+
+  getSpecialties: () =>
+    request<ApiSpecialtiesResponse>("/providers/specialties", { method: "GET" }),
+
+  getFacilityDetails: (facilityId: string) =>
+    request<ApiFacilityDetail>(`/providers/facilities/${facilityId}`, { method: "GET" }),
+
+  getDoctorDetails: (doctorId: string) =>
+    request<ApiDoctorDetail>(`/providers/doctors/${doctorId}`, { method: "GET" }),
+
+  geocodeLocation: (query: string) =>
+    request<ApiGeocodeResult>(`/providers/geocode?query=${encodeURIComponent(query)}`, {
+      method: "GET",
+    }),
 };
+
+export interface ApiVerificationBadge {
+  status: "VERIFIED" | "PARTIALLY_VERIFIED" | "UNVERIFIED" | "DEMO_SIMULATED";
+  tier: string;
+  label: string;
+  description: string;
+  source?: string | null;
+  method?: string | null;
+  verified_at?: string | null;
+  is_demo_data: boolean;
+}
+
+export interface ApiProviderCard {
+  card_type: "doctor" | "facility";
+  id: string;
+  title: string;
+  subtitle: string;
+  facility_name?: string | null;
+  facility_type?: string | null;
+  specialty?: string | null;
+  qualifications?: string | null;
+  experience_years?: number | null;
+  address_line: string;
+  city: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+  distance_km?: number | null;
+  phone?: string | null;
+  emergency_services_available: boolean;
+  languages_spoken?: string[];
+  operating_hours?: Record<string, string> | null;
+  verification: ApiVerificationBadge;
+  is_demo_data: boolean;
+}
+
+export interface ApiEmergencyEscalation {
+  is_emergency: boolean;
+  level: "CRITICAL" | "HIGH";
+  symptoms_detected: string[];
+  action_message: string;
+  emergency_numbers: string[];
+}
+
+export interface ApiProviderSearchResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  items: ApiProviderCard[];
+  emergency_escalation?: ApiEmergencyEscalation | null;
+  applied_filters: Record<string, any>;
+  disclaimer: string;
+}
+
+export interface ApiSpecialtyItem {
+  specialty: string;
+  count: number;
+}
+
+export interface ApiSpecialtiesResponse {
+  specialties: ApiSpecialtyItem[];
+}
+
+export interface ApiFacilityDetail {
+  id: string;
+  name: string;
+  facility_type: string;
+  address: {
+    address_line1: string;
+    address_line2?: string | null;
+    locality?: string | null;
+    city: string;
+    state: string;
+    pincode: string;
+    country: string;
+  };
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  distance_km?: number | null;
+  phone?: string | null;
+  emergency_phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  operating_hours?: Record<string, any> | null;
+  emergency_services_available: boolean;
+  verification: ApiVerificationBadge;
+  source_name: string;
+  source_url?: string | null;
+  affiliated_doctors?: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiDoctorDetail {
+  id: string;
+  full_name: string;
+  gender?: string | null;
+  qualifications: string;
+  primary_specialty: string;
+  secondary_specialties: string[];
+  registration_number?: string | null;
+  registration_council?: string | null;
+  experience_years?: number | null;
+  languages_spoken: string[];
+  consultation_fee?: number | null;
+  bio?: string | null;
+  verification: ApiVerificationBadge;
+  source_name: string;
+  source_url?: string | null;
+  affiliations: Array<{
+    facility_id: string;
+    facility_name: string;
+    facility_type: string;
+    role?: string | null;
+    schedule_summary?: string | null;
+  }>;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiGeocodeResult {
+  query: string;
+  display_name: string;
+  latitude: number;
+  longitude: number;
+  city?: string | null;
+  state?: string | null;
+  country: string;
+  provider: string;
+  attribution: string;
+}
+

@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.api.v1 import auth, health, rag, users
+from app.api.v1 import auth, health, providers, rag, users
 
 api_router = APIRouter()
 
@@ -17,4 +17,7 @@ api_router.include_router(users.router, prefix="/users", tags=["Users & Preferen
 
 # Mount clinical RAG and knowledge retrieval routes
 api_router.include_router(rag.router, prefix="/rag", tags=["Clinical RAG & Knowledge Retrieval"])
+
+# Mount provider discovery and verification routes
+api_router.include_router(providers.router, prefix="/providers", tags=["Doctor & Clinic Discovery"])
 

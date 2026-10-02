@@ -1,0 +1,207 @@
+[
+  {
+    "id": "GEO-01",
+    "category": "geographic_proximity",
+    "description": "Proximity search centered at Apollo Hospital Chennai (13.0604, 80.2496) with 5km radius",
+    "params": {
+      "lat": 13.0604,
+      "lon": 80.2496,
+      "radius_km": 5.0
+    },
+    "expected": {
+      "min_results": 5,
+      "max_distance_km": 5.0,
+      "top_result_id_contains": "Apollo",
+      "distance_sorted": true
+    }
+  },
+  {
+    "id": "GEO-02",
+    "category": "geographic_proximity",
+    "description": "Proximity search centered at AIIMS New Delhi (28.5672, 77.2100) with 10km radius",
+    "params": {
+      "lat": 28.5672,
+      "lon": 77.2100,
+      "radius_km": 10.0
+    },
+    "expected": {
+      "min_results": 2,
+      "max_distance_km": 10.0,
+      "top_result_id_contains": "AIIMS",
+      "distance_sorted": true
+    }
+  },
+  {
+    "id": "GEO-03",
+    "category": "geographic_proximity",
+    "description": "Proximity search centered at Manipal Hospital Bengaluru (12.9592, 77.6499) with 15km radius",
+    "params": {
+      "lat": 12.9592,
+      "lon": 77.6499,
+      "radius_km": 15.0
+    },
+    "expected": {
+      "min_results": 3,
+      "max_distance_km": 15.0,
+      "top_result_id_contains": "Manipal",
+      "distance_sorted": true
+    }
+  },
+  {
+    "id": "GEO-04",
+    "category": "geographic_proximity",
+    "description": "Locality query for Kochi resolving via geocoder and radius search",
+    "params": {
+      "city": "Kochi",
+      "radius_km": 20.0
+    },
+    "expected": {
+      "min_results": 1,
+      "city_matches": "Kochi"
+    }
+  },
+  {
+    "id": "SPEC-01",
+    "category": "specialty_filtering",
+    "description": "Search for Pediatrics specialists across all locations",
+    "params": {
+      "specialty": "Pediatrics"
+    },
+    "expected": {
+      "min_results": 2,
+      "all_specialty_matches": "Pediatrics"
+    }
+  },
+  {
+    "id": "SPEC-02",
+    "category": "specialty_filtering",
+    "description": "Search for Cardiology practitioners in Chennai",
+    "params": {
+      "city": "Chennai",
+      "specialty": "Cardiology"
+    },
+    "expected": {
+      "min_results": 1,
+      "all_specialty_matches": "Cardiology"
+    }
+  },
+  {
+    "id": "SPEC-03",
+    "category": "specialty_filtering",
+    "description": "Search for General Medicine clinics and practitioners",
+    "params": {
+      "specialty": "General Medicine"
+    },
+    "expected": {
+      "min_results": 2,
+      "all_specialty_matches": "General Medicine"
+    }
+  },
+  {
+    "id": "VERIF-01",
+    "category": "verification_status",
+    "description": "Strict filter for Tier 1 Officially Verified healthcare institutions",
+    "params": {
+      "verification_status": "VERIFIED"
+    },
+    "expected": {
+      "min_results": 5,
+      "all_verification_status": "VERIFIED",
+      "all_tiers": "tier_1_verified",
+      "is_demo_labeled": true
+    }
+  },
+  {
+    "id": "VERIF-02",
+    "category": "verification_status",
+    "description": "Filter for Tier 2 Partially Verified / Municipal Listed providers",
+    "params": {
+      "verification_status": "PARTIALLY_VERIFIED"
+    },
+    "expected": {
+      "min_results": 1,
+      "all_verification_status": "PARTIALLY_VERIFIED",
+      "all_tiers": "tier_2_partially_verified",
+      "is_demo_labeled": true
+    }
+  },
+  {
+    "id": "PROV-01",
+    "category": "provenance_completeness",
+    "description": "Validate that all returned provider profiles contain authoritative source and verification timestamp",
+    "params": {
+      "page_size": 20
+    },
+    "expected": {
+      "provenance_fields_present": ["source", "method", "verified_at"],
+      "demo_label_unambiguous": true
+    }
+  },
+  {
+    "id": "EMERG-01",
+    "category": "emergency_routing",
+    "description": "Query containing acute myocardial infarction symptoms in English",
+    "params": {
+      "query": "crushing chest pain radiating to left jaw with sweating",
+      "language": "en"
+    },
+    "expected": {
+      "emergency_escalation_triggered": true,
+      "emergency_level": "CRITICAL",
+      "contains_helpline_112": true
+    }
+  },
+  {
+    "id": "EMERG-02",
+    "category": "emergency_routing",
+    "description": "Query containing respiratory distress symptoms in Tamil",
+    "params": {
+      "query": "கடுமையான நெஞ்சு வலி மற்றும் மூச்சுத் திணறல்",
+      "language": "ta"
+    },
+    "expected": {
+      "emergency_escalation_triggered": true,
+      "emergency_level": "CRITICAL",
+      "contains_helpline_112": true
+    }
+  },
+  {
+    "id": "EMERG-03",
+    "category": "emergency_routing",
+    "description": "Query containing stroke symptoms in Hindi",
+    "params": {
+      "query": "सांस लेने में भारी दिक्कत और सीने में दर्द",
+      "language": "hi"
+    },
+    "expected": {
+      "emergency_escalation_triggered": true,
+      "emergency_level": "CRITICAL",
+      "contains_helpline_112": true
+    }
+  },
+  {
+    "id": "EDGE-01",
+    "category": "edge_case",
+    "description": "Query for nonexistent provider name produces clean empty response with 0 total",
+    "params": {
+      "query": "NonExistentHospitalOrClinicXYZ789"
+    },
+    "expected": {
+      "exact_total": 0,
+      "empty_items": true
+    }
+  },
+  {
+    "id": "EDGE-02",
+    "category": "edge_case",
+    "description": "Search by provider type hospital only",
+    "params": {
+      "provider_type": "hospital"
+    },
+    "expected": {
+      "min_results": 4,
+      "all_card_types": "facility",
+      "all_facility_types": "hospital"
+    }
+  }
+]

@@ -16,3 +16,4 @@ python-multipart>=0.0.9
 email-validator>=2.1.0
 greenlet>=3.0.0
 ruff>=0.4.0
+geoalchemy2>=0.14.0
