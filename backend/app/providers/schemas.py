@@ -31,8 +31,12 @@ class AddressInfo(BaseModel):
 class VerificationBadge(BaseModel):
     """Verification metadata and badge presentation."""
 
-    status: str = Field(..., description="VERIFIED | PARTIALLY_VERIFIED | UNVERIFIED | DEMO_SIMULATED")
-    tier: str = Field(..., description="tier_1_verified | tier_2_partially_verified | tier_3_unverified | tier_4_demo")
+    status: str = Field(..., description="Effective verification status: DEMO_SIMULATED | VERIFIED | PARTIALLY_VERIFIED | UNVERIFIED")
+    tier: str = Field(..., description="Effective tier: tier_4_demo | tier_1_verified | tier_2_partially_verified | tier_3_unverified")
+    effective_status: str = Field(..., description="Effective display/verification status (strictly DEMO_SIMULATED when is_demo_data=True)")
+    effective_tier: str = Field(..., description="Effective tier: tier_4_demo when is_demo_data=True")
+    simulated_target_status: str | None = Field(default=None, description="Target verification status simulated in synthetic environment")
+    simulated_target_tier: str | None = Field(default=None, description="Target tier simulated in synthetic environment")
     label: str = Field(..., description="User-facing badge label")
     description: str = Field(..., description="Detailed explanation of verification method and provenance")
     source: str | None = None
@@ -58,6 +62,8 @@ class FacilitySummary(BaseModel):
     distance_km: float | None = None
     emergency_services_available: bool = False
     verification: VerificationBadge
+    effective_status: str = Field("DEMO_SIMULATED", description="Effective display/verification status")
+    is_demo_data: bool = True
 
 
 class FacilityDetail(BaseModel):
@@ -78,6 +84,8 @@ class FacilityDetail(BaseModel):
     operating_hours: dict[str, Any] | None = None
     emergency_services_available: bool = False
     verification: VerificationBadge
+    effective_status: str = Field("DEMO_SIMULATED", description="Effective display/verification status")
+    is_demo_data: bool = True
     source_name: str
     source_url: str | None = None
     affiliated_doctors: list["DoctorSummary"] = []
@@ -106,6 +114,8 @@ class DoctorSummary(BaseModel):
     longitude: float | None = None
     distance_km: float | None = None
     verification: VerificationBadge
+    effective_status: str = Field("DEMO_SIMULATED", description="Effective display/verification status")
+    is_demo_data: bool = True
 
 
 class DoctorDetail(BaseModel):
@@ -126,6 +136,8 @@ class DoctorDetail(BaseModel):
     consultation_fee: float | None = None
     bio: str | None = None
     verification: VerificationBadge
+    effective_status: str = Field("DEMO_SIMULATED", description="Effective display/verification status")
+    is_demo_data: bool = True
     source_name: str
     source_url: str | None = None
     affiliations: list[dict[str, Any]] = []
@@ -156,6 +168,7 @@ class ProviderCard(BaseModel):
     languages_spoken: list[str] = []
     operating_hours: dict[str, Any] | None = None
     verification: VerificationBadge
+    effective_status: str = Field("DEMO_SIMULATED", description="Effective display/verification status")
     is_demo_data: bool = True
 
 

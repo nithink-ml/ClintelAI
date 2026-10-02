@@ -233,6 +233,10 @@ export const api = {
 export interface ApiVerificationBadge {
   status: "VERIFIED" | "PARTIALLY_VERIFIED" | "UNVERIFIED" | "DEMO_SIMULATED";
   tier: string;
+  effective_status: "VERIFIED" | "PARTIALLY_VERIFIED" | "UNVERIFIED" | "DEMO_SIMULATED";
+  effective_tier?: string;
+  simulated_target_status?: string | null;
+  simulated_target_tier?: string | null;
   label: string;
   description: string;
   source?: string | null;
@@ -262,6 +266,7 @@ export interface ApiProviderCard {
   languages_spoken?: string[];
   operating_hours?: Record<string, string> | null;
   verification: ApiVerificationBadge;
+  effective_status?: string;
   is_demo_data: boolean;
 }
 
@@ -318,6 +323,8 @@ export interface ApiFacilityDetail {
   operating_hours?: Record<string, any> | null;
   emergency_services_available: boolean;
   verification: ApiVerificationBadge;
+  effective_status?: string;
+  is_demo_data: boolean;
   source_name: string;
   source_url?: string | null;
   affiliated_doctors?: any[];
@@ -339,6 +346,8 @@ export interface ApiDoctorDetail {
   consultation_fee?: number | null;
   bio?: string | null;
   verification: ApiVerificationBadge;
+  effective_status?: string;
+  is_demo_data: boolean;
   source_name: string;
   source_url?: string | null;
   affiliations: Array<{

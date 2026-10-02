@@ -112,9 +112,8 @@ export function ProviderDetailModal({
               <AlertTriangle className="w-4 h-4 text-amber-600" />
               <span>Simulated Verification Dataset</span>
             </div>
-            <p className="text-amber-700 leading-relaxed">
-              This record is synthetic test data created strictly to test PostGIS proximity calculations,
-              verification tier rules, and red-flag emergency boundaries. Do not use for clinical care.
+            <p className="text-amber-800 leading-relaxed font-medium">
+              Simulated demonstration record. Do not use for actual clinical appointments or emergency care.
             </p>
           </div>
         )}

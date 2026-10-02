@@ -12,6 +12,7 @@ from app.db.session import AsyncSessionLocal
 from app.main import app
 from app.models.audit_log import AuditLog
 from app.models.provider import VerificationStatus, VerificationTier
+from app.providers.service import ProviderService
 
 
 @pytest.fixture
@@ -135,7 +136,7 @@ async def test_provider_type_filtering():
 
 @pytest.mark.asyncio
 async def test_verification_tiers_and_provenance():
-    """Verify explicit verification tiers and mandatory provenance metadata."""
+    """Verify explicit verification tiers and mandatory provenance metadata under demo guardrail."""
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url="http://test") as ac:
         resp = await ac.get(
@@ -149,14 +150,116 @@ async def test_verification_tiers_and_provenance():
 
     for item in data["items"]:
         v = item["verification"]
-        assert v["status"] == VerificationStatus.VERIFIED.value
-        assert v["tier"] == VerificationTier.TIER_1_VERIFIED.value
+        # STRICT DEMO GUARDRAIL: Synthetic data effective status is strictly DEMO_SIMULATED
+        assert v["status"] == VerificationStatus.DEMO_SIMULATED.value
+        assert v["effective_status"] == VerificationStatus.DEMO_SIMULATED.value
+        assert v["tier"] == VerificationTier.TIER_4_DEMO.value
+        assert v["effective_tier"] == VerificationTier.TIER_4_DEMO.value
+        assert v["label"] == "DEMO_SIMULATED"
+        # Simulated target tracks the simulated tier for benchmark auditing
+        assert v["simulated_target_status"] == VerificationStatus.VERIFIED.value
+        assert v["simulated_target_tier"] == VerificationTier.TIER_1_VERIFIED.value
         # Check provenance retention
         assert v["source"] is not None and len(v["source"]) > 0
         assert v["method"] is not None and len(v["method"]) > 0
         assert v["verified_at"] is not None
         # All demo entries must have is_demo_data=True
         assert v["is_demo_data"] is True
+        assert item["is_demo_data"] is True
+        assert item["effective_status"] == "DEMO_SIMULATED"
+        assert "Simulated demonstration record. Do not use for actual clinical appointments or emergency care." in v["description"]
+
+
+@pytest.mark.asyncio
+async def test_demo_guardrail_synthetic_providers_never_presented_as_verified():
+    """STRICT GUARDRAIL TEST (Requirement 5):
+    Proves synthetic demo providers can NEVER be presented as officially verified,
+    partially verified, or unverified. Effective status MUST ALWAYS be DEMO_SIMULATED.
+    """
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        # 1. Test search endpoint across all types and pages
+        search_resp = await ac.get("/api/v1/providers/search?page_size=50")
+        assert search_resp.status_code == 200
+        items = search_resp.json()["items"]
+        assert len(items) > 0
+
+        for item in items:
+            if item["is_demo_data"]:
+                # Must NEVER have effective status VERIFIED, PARTIALLY_VERIFIED, or UNVERIFIED
+                assert item["effective_status"] == "DEMO_SIMULATED"
+                assert item["effective_status"] not in ("VERIFIED", "PARTIALLY_VERIFIED", "UNVERIFIED")
+
+                v = item["verification"]
+                assert v["is_demo_data"] is True
+                assert v["effective_status"] == "DEMO_SIMULATED"
+                assert v["status"] == "DEMO_SIMULATED"
+                assert v["effective_tier"] == "tier_4_demo"
+                assert v["tier"] == "tier_4_demo"
+                assert v["label"] == "DEMO_SIMULATED"
+                assert v["status"] not in ("VERIFIED", "PARTIALLY_VERIFIED", "UNVERIFIED")
+                assert v["effective_status"] not in ("VERIFIED", "PARTIALLY_VERIFIED", "UNVERIFIED")
+                assert "Simulated demonstration record. Do not use for actual clinical appointments or emergency care." in v["description"]
+
+        # 2. Test Facility details endpoint
+        fac_item = next(i for i in items if i["card_type"] == "facility")
+        fac_resp = await ac.get(f"/api/v1/providers/facilities/{fac_item['id']}")
+        assert fac_resp.status_code == 200
+        fac_data = fac_resp.json()
+        assert fac_data["is_demo_data"] is True
+        assert fac_data["effective_status"] == "DEMO_SIMULATED"
+        assert fac_data["verification"]["effective_status"] == "DEMO_SIMULATED"
+        assert fac_data["verification"]["status"] == "DEMO_SIMULATED"
+        assert fac_data["verification"]["status"] not in ("VERIFIED", "PARTIALLY_VERIFIED", "UNVERIFIED")
+        assert fac_data["verification"]["label"] == "DEMO_SIMULATED"
+
+        # 3. Test Doctor details endpoint
+        doc_item = next(i for i in items if i["card_type"] == "doctor")
+        doc_resp = await ac.get(f"/api/v1/providers/doctors/{doc_item['id']}")
+        assert doc_resp.status_code == 200
+        doc_data = doc_resp.json()
+        assert doc_data["is_demo_data"] is True
+        assert doc_data["effective_status"] == "DEMO_SIMULATED"
+        assert doc_data["verification"]["effective_status"] == "DEMO_SIMULATED"
+        assert doc_data["verification"]["status"] == "DEMO_SIMULATED"
+        assert doc_data["verification"]["status"] not in ("VERIFIED", "PARTIALLY_VERIFIED", "UNVERIFIED")
+        assert doc_data["verification"]["label"] == "DEMO_SIMULATED"
+
+        # 4. Direct unit test of ProviderService.build_verification_badge
+        # Even if a caller attempts to build a badge with status="VERIFIED" and tier="tier_1_verified",
+        # if is_demo=True, the effective status and tier MUST be DEMO_SIMULATED / tier_4_demo.
+        badge = ProviderService.build_verification_badge(
+            status="VERIFIED",
+            tier="tier_1_verified",
+            source="Test Source",
+            method="TEST_METHOD",
+            is_demo=True,
+        )
+        assert badge.is_demo_data is True
+        assert badge.effective_status == "DEMO_SIMULATED"
+        assert badge.status == "DEMO_SIMULATED"
+        assert badge.effective_tier == "tier_4_demo"
+        assert badge.tier == "tier_4_demo"
+        assert badge.label == "DEMO_SIMULATED"
+        assert badge.status != "VERIFIED"
+        assert badge.simulated_target_status == "VERIFIED"
+        assert badge.simulated_target_tier == "tier_1_verified"
+        assert "Simulated demonstration record. Do not use for actual clinical appointments or emergency care." in badge.description
+
+        # 5. Proves real verification tiers REMAIN available for future authoritative provider ingestion (is_demo=False)
+        real_badge = ProviderService.build_verification_badge(
+            status="VERIFIED",
+            tier="tier_1_verified",
+            source="National Medical Commission Registry",
+            method="OFFICIAL_REGISTRY_API",
+            is_demo=False,
+        )
+        assert real_badge.is_demo_data is False
+        assert real_badge.effective_status == "VERIFIED"
+        assert real_badge.status == "VERIFIED"
+        assert real_badge.tier == "tier_1_verified"
+        assert real_badge.label == "Officially Verified"
+        assert real_badge.simulated_target_status is None
 
 
 @pytest.mark.asyncio

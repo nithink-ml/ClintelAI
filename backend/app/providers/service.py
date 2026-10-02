@@ -45,31 +45,47 @@ class ProviderService:
         verified_at: datetime | None = None,
         is_demo: bool = True,
     ) -> VerificationBadge:
-        """Constructs a structured, transparent verification badge."""
+        """Constructs a structured, transparent verification badge with strict demo guardrails.
+
+        STRICT GUARDRAIL:
+        If is_demo is True, effective_status is strictly DEMO_SIMULATED, effective_tier is tier_4_demo,
+        and label is DEMO_SIMULATED. Under no circumstances can a synthetic demo provider receive
+        an effective badge of VERIFIED, PARTIALLY_VERIFIED, or UNVERIFIED.
+        """
         st_upper = status.upper() if status else VerificationStatus.DEMO_SIMULATED.value
 
         if is_demo:
-            label = "DEMO / TEST LISTING"
-            desc = (
-                "Synthetic demonstration entry created strictly for algorithmic and UI verification. "
-                "Do not use for real-world clinical appointments or emergency care."
-            )
-        elif st_upper == VerificationStatus.VERIFIED.value:
-            label = "Officially Verified"
-            desc = "Formally cross-referenced and verified against authoritative Medical Council or NABH registry."
-        elif st_upper == VerificationStatus.PARTIALLY_VERIFIED.value:
-            label = "Third-Party Listed"
-            desc = "Confirmed via municipal register or OpenStreetMap directory; independent license verification pending."
-        elif st_upper == VerificationStatus.UNVERIFIED.value:
-            label = "Unverified Listing"
-            desc = "Community-submitted record without official licensing verification. Exercise clinical discretion."
+            effective_status = VerificationStatus.DEMO_SIMULATED.value
+            effective_tier = VerificationTier.TIER_4_DEMO.value
+            label = "DEMO_SIMULATED"
+            desc = "Simulated demonstration record. Do not use for actual clinical appointments or emergency care."
+            simulated_target_status = st_upper
+            simulated_target_tier = tier
         else:
-            label = "Simulated Record"
-            desc = "Simulated record for testing purposes."
+            effective_status = st_upper
+            effective_tier = tier
+            simulated_target_status = None
+            simulated_target_tier = None
+            if st_upper == VerificationStatus.VERIFIED.value:
+                label = "Officially Verified"
+                desc = "Formally cross-referenced and verified against authoritative Medical Council or NABH registry."
+            elif st_upper == VerificationStatus.PARTIALLY_VERIFIED.value:
+                label = "Third-Party Listed"
+                desc = "Confirmed via municipal register or OpenStreetMap directory; independent license verification pending."
+            elif st_upper == VerificationStatus.UNVERIFIED.value:
+                label = "Unverified Listing"
+                desc = "Community-submitted record without official licensing verification. Exercise clinical discretion."
+            else:
+                label = st_upper
+                desc = "Listing record."
 
         return VerificationBadge(
-            status=st_upper,
-            tier=tier,
+            status=effective_status,
+            tier=effective_tier,
+            effective_status=effective_status,
+            effective_tier=effective_tier,
+            simulated_target_status=simulated_target_status,
+            simulated_target_tier=simulated_target_tier,
             label=label,
             description=desc,
             source=source,
@@ -197,9 +213,10 @@ class ProviderService:
         paginated_items = cards[start_idx:end_idx]
 
         disclaimer = (
-            "Notice: ClintelAI Provider Discovery provides factual, unranked healthcare directory listings "
-            "based on verified registrations and public directories. ClintelAI does not endorse or rank providers by clinical skill. "
-            "Always independently verify credentials. In medical emergencies, immediately dial 112 or 108."
+            "Notice: ClintelAI Provider Discovery is an informational directory. "
+            "All current seeded records are synthetic demonstration entries created for technical testing and UX demonstration. "
+            "Simulated demonstration record. Do not use for actual clinical appointments or emergency care. "
+            "In case of a medical emergency, immediately call 112 or 108."
         )
 
         return ProviderSearchResponse(
@@ -253,7 +270,16 @@ class ProviderService:
 
         # Verification status filter
         if verification_status:
-            stmt = stmt.where(Facility.verification_status == verification_status.upper())
+            v_upper = verification_status.upper()
+            if v_upper == "DEMO_SIMULATED":
+                stmt = stmt.where(
+                    or_(
+                        Facility.verification_status == "DEMO_SIMULATED",
+                        Facility.is_demo_data.is_(True),
+                    )
+                )
+            else:
+                stmt = stmt.where(Facility.verification_status == v_upper)
 
         # Query text match
         if query and query.strip():
@@ -333,7 +359,16 @@ class ProviderService:
         if state:
             stmt = stmt.where(func.lower(Facility.state) == state.lower())
         if verification_status:
-            stmt = stmt.where(Doctor.verification_status == verification_status.upper())
+            v_upper = verification_status.upper()
+            if v_upper == "DEMO_SIMULATED":
+                stmt = stmt.where(
+                    or_(
+                        Doctor.verification_status == "DEMO_SIMULATED",
+                        Doctor.is_demo_data.is_(True),
+                    )
+                )
+            else:
+                stmt = stmt.where(Doctor.verification_status == v_upper)
 
         if specialty:
             spec_term = f"%{specialty.strip().lower()}%"
@@ -402,6 +437,7 @@ class ProviderService:
             languages_spoken=[],
             operating_hours=fac.operating_hours,
             verification=badge,
+            effective_status=badge.effective_status,
             is_demo_data=fac.is_demo_data,
         )
 
@@ -459,6 +495,7 @@ class ProviderService:
             languages_spoken=doc.languages_spoken or [],
             operating_hours=aff.schedule if aff else None,
             verification=badge,
+            effective_status=badge.effective_status,
             is_demo_data=doc.is_demo_data,
         )
 
@@ -544,6 +581,8 @@ class ProviderService:
                         latitude=fac.latitude,
                         longitude=fac.longitude,
                         verification=doc_badge,
+                        effective_status=doc_badge.effective_status,
+                        is_demo_data=doc.is_demo_data,
                     )
                 )
 
@@ -571,6 +610,8 @@ class ProviderService:
             operating_hours=fac.operating_hours,
             emergency_services_available=fac.emergency_services_available,
             verification=badge,
+            effective_status=badge.effective_status,
+            is_demo_data=fac.is_demo_data,
             source_name=fac.source_name,
             source_url=fac.source_url,
             affiliated_doctors=affiliated_docs,
@@ -632,6 +673,8 @@ class ProviderService:
             consultation_fee=doc.consultation_fee,
             bio=doc.bio,
             verification=badge,
+            effective_status=badge.effective_status,
+            is_demo_data=doc.is_demo_data,
             source_name=doc.source_name,
             source_url=doc.source_url,
             affiliations=affiliations_data,

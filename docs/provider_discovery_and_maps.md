@@ -70,18 +70,36 @@ To maintain clinical integrity, every healthcare provider entity is assigned an 
 
 | Verification Tier | Status Enum | Description | Display Treatment |
 |---|---|---|---|
-| **Tier 1: Officially Verified** | `VERIFIED` | Formally cross-referenced and verified against authoritative registries (NMC, State Medical Councils, NABH). | Emerald Shield Badge (`bg-emerald-50 text-emerald-700`) |
+| **Tier 1: Officially Verified** | `VERIFIED` | Formally cross-referenced and verified against authoritative registries (NMC, State Medical Councils, NABH). Reserved for authoritative ingestion. | Emerald Shield Badge (`bg-emerald-50 text-emerald-700`) |
 | **Tier 2: Third-Party Listed** | `PARTIALLY_VERIFIED` | Confirmed via municipal registry, OpenStreetMap healthcare directory, or hospital directory; state medical council license verification pending. | Amber Info Badge (`bg-amber-50 text-amber-700`) |
 | **Tier 3: Unverified Listing** | `UNVERIFIED` | Community or self-submitted listing without official licensing verification. Exercise clinical discretion. | Slate Alert Badge (`bg-slate-100 text-slate-700`) |
-| **Tier 4: Simulated / Demo** | `DEMO_SIMULATED` | Synthetic test entry created exclusively for algorithmic, spatial, and interface testing. | Prominent Amber/Purple Banner ("SIMULATED DEMO RECORD") |
+| **Tier 4: Simulated / Demo** | `DEMO_SIMULATED` | Synthetic test entry created exclusively for algorithmic, spatial, and interface testing. | Prominent Purple/Amber Guardrail Badge ("DEMO_SIMULATED" + "SYNTHETIC") |
 
-### Provenance Guarantee
+### 3.1 Strict Demo Data Verification Guardrail
+> [!IMPORTANT]
+> **Dataset Limitation & Demonstration Disclaimer**:
+> The currently seeded provider dataset (14 facilities, 16 doctors) is **synthetic demonstration data** created strictly for algorithmic validation of PostGIS proximity queries, verification tier rules, specialty filters, and red-flag emergency detection. **It is NOT a production healthcare directory.**
+
+To prevent any possibility of synthetic test data misleading users or patients, the system enforces a **strict Demo Data Verification Guardrail** at both backend service and frontend presentation layers:
+1. **Effective Status Enforcement**:
+   - If `provider.is_demo_data == true`, the effective status is **strictly forced to `DEMO_SIMULATED`** and tier is forced to `tier_4_demo`.
+   - The UI **NEVER** displays `VERIFIED`, `PARTIALLY_VERIFIED`, or `UNVERIFIED` as the effective verification badge for any synthetic provider.
+2. **Prominent Mandatory Warning**:
+   Every synthetic provider card, detail view, tooltip, and API payload carries the mandatory warning:
+   > *"Simulated demonstration record. Do not use for actual clinical appointments or emergency care."*
+3. **API Transparency**:
+   Provider search and detail APIs explicitly expose `is_demo_data: true`, `effective_status: "DEMO_SIMULATED"`, `effective_tier: "tier_4_demo"`, and retain `simulated_target_status` / `simulated_target_tier` for audit and benchmark evaluation.
+4. **Preservation of Authoritative Ingestion**:
+   The authoritative verification tiers (`VERIFIED`, `PARTIALLY_VERIFIED`, `UNVERIFIED`) remain fully functional in data models and badge renderers for future authoritative ingestion (when `is_demo_data == false`).
+
+### 3.2 Provenance Guarantee
 Every record retains:
 1. `source_name` (e.g., "National Accreditation Board for Hospitals & Healthcare Providers")
 2. `source_url` (where public reference exists)
 3. `verification_method` (e.g., `NABH_ACCREDITATION_VERIFICATION`, `COUNCIL_REGISTRY_LOOKUP`)
 4. `verified_at` (UTC timestamp)
 5. `is_demo_data` (`True` for all synthetic benchmark records)
+6. `effective_status` (Strictly `DEMO_SIMULATED` when `is_demo_data` is `True`)
 
 ---
 

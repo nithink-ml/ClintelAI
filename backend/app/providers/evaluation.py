@@ -113,15 +113,24 @@ class ProviderEvaluationHarness:
                     if "all_verification_status" in expected:
                         exp_v = expected["all_verification_status"]
                         for it in res.items:
-                            if it.verification.status != exp_v:
+                            # Demo Guardrail validation:
+                            # 1. Effective status MUST be DEMO_SIMULATED for demo data
+                            if it.verification.effective_status != "DEMO_SIMULATED" or it.verification.status != "DEMO_SIMULATED":
                                 passed = False
-                                failures.append(f"Status {it.verification.status} != {exp_v}")
+                                failures.append(f"Guardrail violation: status={it.verification.status}, effective_status={it.verification.effective_status}")
+                            # 2. Simulated target matches the query filter
+                            if it.verification.simulated_target_status != exp_v:
+                                passed = False
+                                failures.append(f"Target status {it.verification.simulated_target_status} != {exp_v}")
                     if "all_tiers" in expected:
                         exp_tier = expected["all_tiers"]
                         for it in res.items:
-                            if it.verification.tier != exp_tier:
+                            if it.verification.effective_tier != "tier_4_demo" or it.verification.tier != "tier_4_demo":
                                 passed = False
-                                failures.append(f"Tier {it.verification.tier} != {exp_tier}")
+                                failures.append(f"Effective tier {it.verification.tier} != tier_4_demo")
+                            if it.verification.simulated_target_tier != exp_tier:
+                                passed = False
+                                failures.append(f"Simulated target tier {it.verification.simulated_target_tier} != {exp_tier}")
                     if expected.get("is_demo_labeled"):
                         for it in res.items:
                             if not it.verification.is_demo_data or not it.is_demo_data:
@@ -141,6 +150,9 @@ class ProviderEvaluationHarness:
                         if not v.is_demo_data or "DEMO" not in v.label:
                             passed = False
                             failures.append(f"Item {it.id} missing demo badge label")
+                        if "Simulated demonstration record" not in v.description:
+                            passed = False
+                            failures.append(f"Item {it.id} missing required demo warning in description")
                     if passed:
                         prov_passed += 1
 
@@ -224,3 +236,16 @@ class ProviderEvaluationHarness:
             ),
             "results": results,
         }
+
+
+if __name__ == "__main__":
+    import asyncio
+    import json
+
+    async def main():
+        harness = ProviderEvaluationHarness()
+        report = await harness.run_evaluation()
+        print(json.dumps(report, indent=2))
+
+    asyncio.run(main())
+

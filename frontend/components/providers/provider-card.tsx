@@ -130,9 +130,9 @@ export function ProviderCardComponent({ card, onSelect, isSelected }: ProviderCa
 
         {/* Demo Warning Pill */}
         {card.is_demo_data && (
-          <div className="bg-amber-50/70 border border-amber-200/80 rounded-lg px-2.5 py-1.5 text-[10px] text-amber-900 flex items-center gap-1.5 leading-tight">
+          <div className="bg-amber-50/70 border border-amber-200/80 rounded-lg px-2.5 py-1.5 text-[10px] text-amber-900 flex items-center gap-1.5 leading-tight font-medium">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-            <span>Simulated demonstration record. Do not use for actual clinical appointments.</span>
+            <span>Simulated demonstration record. Do not use for actual clinical appointments or emergency care.</span>
           </div>
         )}
 
