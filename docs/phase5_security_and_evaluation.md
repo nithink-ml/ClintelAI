@@ -4,6 +4,7 @@
 **Document Version:** 1.1.0  
 **Phase:** 5 (Security Hardening, RAG & Provider Evaluation, Adversarial Testing, and Observability)  
 **Date:** October 2026  
+**Git Commit Hash:** `ad016b639c166df82e782f7d525a6a5c01c9663e`  
 **Status:** Verification Complete — All Tests Passing (84/84 Backend, 11/11 Frontend)
 
 ---
