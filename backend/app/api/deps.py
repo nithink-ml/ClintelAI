@@ -94,6 +94,36 @@ def require_role(*allowed_roles: str | list[str]):
     return role_checker
 
 
+def sanitize_audit_details(details: dict | None) -> dict | None:
+    """Sanitizes sensitive fields, credentials, and high-precision coordinates for audit records."""
+    if not details:
+        return details
+    sanitized: dict = {}
+    for k, v in details.items():
+        k_lower = str(k).lower()
+        if any(secret_kw in k_lower for secret_kw in ("password", "secret", "token", "api_key", "credential")):
+            sanitized[k] = "[REDACTED]"
+        elif k_lower in ("lat", "latitude", "lon", "longitude", "lng") and isinstance(v, (int, float)):
+            sanitized[k] = round(float(v), 2)
+        elif isinstance(v, dict):
+            sanitized[k] = sanitize_audit_details(v)
+        elif isinstance(v, list):
+            sanitized[k] = [
+                sanitize_audit_details(item) if isinstance(item, dict) else item
+                for item in v
+            ]
+        elif isinstance(v, str):
+            val = v
+            if "bearer " in val.lower():
+                import re
+
+                val = re.sub(r"bearer\s+[a-zA-Z0-9_\-\.]+", "Bearer [REDACTED]", val, flags=re.IGNORECASE)
+            sanitized[k] = val
+        else:
+            sanitized[k] = v
+    return sanitized
+
+
 async def log_audit_event(
     db: AsyncSession,
     action: str,
@@ -110,12 +140,14 @@ async def log_audit_event(
         ip_address = client.host if client else None
         user_agent = request.headers.get("user-agent")
 
+    clean_details = sanitize_audit_details(details)
+
     audit = AuditLog(
         user_id=user_id,
         action=action,
         ip_address=ip_address,
         user_agent=user_agent,
-        details=details,
+        details=clean_details,
     )
     db.add(audit)
     await db.commit()

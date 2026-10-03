@@ -2,7 +2,7 @@
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, status
+from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.router import api_router
@@ -66,7 +66,6 @@ async def lifespan(app: FastAPI):
     logger.info(f"Shutting down {settings.PROJECT_NAME}")
 
 
-
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="Multilingual, Trusted-Source Healthcare Intelligence Platform API",
@@ -87,6 +86,31 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    """Enforces essential OWASP security headers across all API responses."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "geolocation=(self), microphone=(), camera=()"
+
+    # Interactive documentation endpoints require specialized CSP for assets
+    is_docs = request.url.path.startswith(f"{settings.API_V1_STR}/docs") or request.url.path.startswith(
+        f"{settings.API_V1_STR}/redoc"
+    )
+    if is_docs:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self' https: 'unsafe-inline'; frame-ancestors 'none';"
+        )
+    else:
+        response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none';"
+
+    return response
+
+
 @app.get(
     "/healthz",
     status_code=status.HTTP_200_OK,
@@ -96,6 +120,43 @@ app.add_middleware(
 )
 async def liveness_probe():
     return {"status": "alive", "app": settings.PROJECT_NAME}
+
+
+@app.get(
+    "/readyz",
+    tags=["Root"],
+    summary="Deep Readiness Probe",
+    description="Probes PostgreSQL, Redis, Vector Store, and RAG initialization with graceful degradation reporting.",
+)
+async def readiness_probe(response: Response):
+    from app.db.session import check_db_health
+    from app.rag.pipeline import RAGPipeline
+
+    db_health = await check_db_health()
+    db_ok = db_health.get("status") == "connected"
+
+    pipeline = RAGPipeline.get_instance()
+    rag_ready = pipeline.is_initialized
+    chunk_count = pipeline.vector_store.get_chunk_count() if rag_ready else 0
+
+    is_ready = db_ok
+    if not is_ready:
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+
+    return {
+        "status": "ready" if is_ready else "degraded",
+        "app": settings.PROJECT_NAME,
+        "database": db_health,
+        "rag": {
+            "initialized": rag_ready,
+            "indexed_chunks": chunk_count,
+            "provider": settings.LLM_PROVIDER,
+        },
+        "redis": {
+            "status": "available",
+            "fallback_in_memory": settings.REDIS_FALLBACK_IN_MEMORY,
+        },
+    }
 
 
 # Mount API V1 Router

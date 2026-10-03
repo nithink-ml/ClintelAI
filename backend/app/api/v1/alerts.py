@@ -38,6 +38,7 @@ async def search_alerts(
     query: str | None = Query(None, description="Search term (condition, pathogen, or advisory keyword)"),
     lat: float | None = Query(None, ge=-90.0, le=90.0, description="User latitude for distance sorting"),
     lon: float | None = Query(None, ge=-180.0, le=180.0, description="User longitude for distance sorting"),
+    radius_km: float | None = Query(None, ge=1.0, le=500.0, description="Search radius in kilometers"),
     state: str | None = Query(None, description="State filter (e.g., Tamil Nadu, Kerala, Karnataka)"),
     district: str | None = Query(None, description="District filter (e.g., Chennai, Kozhikode, Bengaluru)"),
     city: str | None = Query(None, description="City filter"),

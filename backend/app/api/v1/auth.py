@@ -223,7 +223,37 @@ async def refresh_access_token(
     token_record = result.scalar_one_or_none()
 
     now_utc = datetime.now(UTC)
-    if not token_record or token_record.expires_at < now_utc:
+    if not token_record:
+        # Check if this token was already revoked (Token Reuse Detection - RFC 6749 Sec 10.4)
+        revoked_stmt = select(RefreshToken).where(
+            RefreshToken.token == payload.refresh_token,
+            RefreshToken.user_id == user_id,
+            RefreshToken.revoked.is_(True),
+        )
+        revoked_res = await db.execute(revoked_stmt)
+        reused_token = revoked_res.scalar_one_or_none()
+        if reused_token:
+            from sqlalchemy import update
+
+            logger.warning(
+                f"SECURITY INCIDENT: Refresh token reuse detected for user {user_id}. Revoking all sessions."
+            )
+            # Invalidate all active tokens for this user to protect against compromised credentials
+            await db.execute(
+                update(RefreshToken).where(RefreshToken.user_id == user_id).values(revoked=True)
+            )
+            await log_audit_event(
+                db=db,
+                action="SECURITY_REFRESH_TOKEN_REUSE_DETECTED",
+                user_id=user_id,
+                request=request,
+                details={"reason": "Attempted reuse of revoked refresh token; all sessions invalidated."},
+            )
+            await db.commit()
+
+        raise unauthorized_error
+
+    if token_record.expires_at < now_utc:
         raise unauthorized_error
 
     # Revoke old refresh token (strict token rotation)

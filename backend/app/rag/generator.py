@@ -1,9 +1,7 @@
 """Evidence-grounded response generation, citation binding, and abstention engine."""
 
-import re
 
 from app.rag.models import Citation, EvidenceChunk
-from app.rag.safety import MedicalSafetyEngine
 
 
 class GroundedGenerator:
@@ -86,79 +84,18 @@ class GroundedGenerator:
         emergency_detected: bool = False,
     ) -> tuple[str, list[Citation], bool, str | None]:
         """Synthesizes an evidence-grounded answer with inline citations or triggers abstention.
-        
+
+        Delegates to the configured LLM provider (mock or gemini) with full evidence grounding.
+
         Returns:
             (answer_text, citations_list, abstained_bool, abstention_reason)
         """
-        # 1. Abstention Check: If no evidence passed threshold
-        if not evidence or len(evidence) == 0:
-            abstention_msg = cls.MULTILINGUAL_ABSTENTION_MESSAGES.get(
-                language, cls.MULTILINGUAL_ABSTENTION_MESSAGES["en"]
-            )
-            return abstention_msg, [], True, "SIMILARITY_BELOW_THRESHOLD_OR_NO_EVIDENCE"
+        from app.rag.providers.factory import get_llm_provider
 
-        # Check if top score is reasonably strong
-        _, top_score = evidence[0]
-        if top_score < 0.40:
-            abstention_msg = cls.MULTILINGUAL_ABSTENTION_MESSAGES.get(
-                language, cls.MULTILINGUAL_ABSTENTION_MESSAGES["en"]
-            )
-            return abstention_msg, [], True, "INSUFFICIENT_EVIDENCE_SCORE"
-
-        # 2. Build Structured Citations
-        citations: list[Citation] = []
-        for idx, (chunk, score) in enumerate(evidence, start=1):
-            # Extract clean snippet
-            raw_content = chunk.content
-            # Strip context header if present
-            clean_body = re.sub(r"^\[.*?\]\n?", "", raw_content).strip()
-            sentences = re.split(r"(?<=[.!?])\s+", clean_body)
-            snippet = " ".join(sentences[:2]) if len(sentences) >= 2 else clean_body[:200]
-
-            citations.append(
-                Citation(
-                    citation_index=idx,
-                    chunk_id=chunk.chunk_id,
-                    document_id=chunk.document_id,
-                    source_name=chunk.source_name,
-                    authority_tier=chunk.authority_tier,
-                    title=chunk.title,
-                    section_title=chunk.section_title,
-                    url=chunk.url,
-                    published_date=chunk.published_date,
-                    snippet=snippet,
-                    relevance_score=score,
-                )
-            )
-
-        # 3. Synthesize Grounded Medical Content
-        headers = cls.MULTILINGUAL_SECTION_HEADERS.get(language, cls.MULTILINGUAL_SECTION_HEADERS["en"])
-
-        answer_lines: list[str] = []
-        answer_lines.append(f"### {headers['findings']}")
-
-        # Primary evidence statements with inline citations [1]
-        for idx, (chunk, score) in enumerate(evidence[:2], start=1):
-            clean_text = re.sub(r"^\[.*?\]\n?", "", chunk.content).strip()
-            sentences = re.split(r"(?<=[.!?])\s+", clean_text)
-            if sentences:
-                core_finding = sentences[0]
-                answer_lines.append(f"- According to guidance from the **{chunk.source_name}** ({chunk.title}), {core_finding} [{idx}]")
-                if len(sentences) > 1:
-                    secondary = sentences[1]
-                    answer_lines.append(f"  {secondary} [{idx}]")
-
-        answer_lines.append(f"\n### {headers['guidelines']}")
-        # Secondary clinical points with citations
-        for idx, (chunk, score) in enumerate(evidence[1:], start=2):
-            clean_text = re.sub(r"^\[.*?\]\n?", "", chunk.content).strip()
-            sentences = re.split(r"(?<=[.!?])\s+", clean_text)
-            if len(sentences) >= 2:
-                rec = sentences[1] if len(sentences) > 1 else sentences[0]
-                answer_lines.append(f"- **{chunk.section_title}**: {rec} [{idx}]")
-
-        # Clinical boundary sanitation
-        full_answer = "\n".join(answer_lines)
-        sanitized_answer = MedicalSafetyEngine.sanitize_medical_text(full_answer)
-
-        return sanitized_answer, citations, False, None
+        provider = get_llm_provider()
+        return provider.generate_grounded_response(
+            query=query,
+            evidence=evidence,
+            language=language,
+            emergency_detected=emergency_detected,
+        )
