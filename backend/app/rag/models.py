@@ -68,12 +68,47 @@ class RAGQueryRequest(BaseModel):
     max_evidence_chunks: int = Field(default=4, ge=1, le=10)
 
 
+class GroundedResponse(tuple):
+    """Tuple-compatible response container preserving 4-item unpacking and adding generation metadata."""
+
+    answer: str
+    citations: list[Citation]
+    abstained: bool
+    abstention_reason: str | None
+    llm_provider: str
+    fallback_used: bool
+    generation_mode: str
+
+    def __new__(
+        cls,
+        answer: str,
+        citations: list[Citation],
+        abstained: bool,
+        abstention_reason: str | None,
+        llm_provider: str = "mock",
+        fallback_used: bool = False,
+        generation_mode: str = "MOCK_DIRECT",
+    ):
+        obj = super().__new__(cls, (answer, citations, abstained, abstention_reason))
+        obj.answer = answer
+        obj.citations = citations
+        obj.abstained = abstained
+        obj.abstention_reason = abstention_reason
+        obj.llm_provider = llm_provider
+        obj.fallback_used = fallback_used
+        obj.generation_mode = generation_mode
+        return obj
+
+
 class RetrievalMetadata(BaseModel):
     chunks_evaluated: int
     chunks_retained: int
     top_similarity_score: float
     retrieval_strategy: str
     latency_ms: float
+    llm_provider: str = "mock"
+    fallback_used: bool = False
+    generation_mode: str = "DIRECT"
 
 
 class RAGQueryResponse(BaseModel):
@@ -87,6 +122,8 @@ class RAGQueryResponse(BaseModel):
     medical_safety_level: str = "INFORMATIONAL_VERIFIED"
     safety_disclaimer: str
     emergency: EmergencyEscalation
+    llm_provider: str = "mock"
+    fallback_used: bool = False
     retrieval_metadata: RetrievalMetadata
 
 

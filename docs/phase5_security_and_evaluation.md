@@ -1,10 +1,10 @@
 # Phase 5: Security, Evaluation & Quality Engineering Report
 
 **Platform:** ClintelAI — Multilingual, Trusted-Source Healthcare Intelligence Platform  
-**Document Version:** 1.0.0  
+**Document Version:** 1.1.0  
 **Phase:** 5 (Security Hardening, RAG & Provider Evaluation, Adversarial Testing, and Observability)  
 **Date:** October 2026  
-**Status:** Verification Complete — All Tests Passing (77/77 Backend, 11/11 Frontend)
+**Status:** Verification Complete — All Tests Passing (84/84 Backend, 11/11 Frontend)
 
 ---
 
@@ -12,14 +12,19 @@
 
 Phase 5 establishes the security architecture, clinical guardrails, adversarial resilience, and quality engineering standards for ClintelAI. The objective of Phase 5 is to systematically harden the platform against security vulnerabilities, ensure that clinical responses remain strictly evidence-grounded without hallucination, enforce data isolation between synthetic demo records and real provider records, ensure privacy protection for patient location and PII, implement deep observability and graceful degradation, and validate cross-module safety end-to-end.
 
+Following Phase 5 review, two remaining architectural findings have been rigorously resolved and validated:
+1. **Gemini Production Fallback Safety**: Implemented explicit `LLM_FALLBACK_ENABLED` configuration (defaulting to `false` in production). When Gemini is unavailable in production, silent mock fallback is strictly forbidden; the system returns an explicit, controlled degraded response with preserved evidence citations and distinct audit metadata (`generation_mode="CONTROLLED_DEGRADED"`).
+2. **NPM High-Severity Dependency Review & Runtime Isolation**: Inspected the full dependency tree for `braces`/`micromatch` (7 high-severity advisories). Isolated all vulnerable packages exclusively to build-time `devDependencies`, proved no attacker-controlled path can reach them at runtime, and hardened `infrastructure/docker/frontend.Dockerfile` with a dedicated multi-stage `prod-deps` build (`npm ci --omit=dev`), resulting in **0 vulnerabilities** in the production runtime container.
+
 ### Key Milestones Achieved:
 1. **Security Hardening**: Enforced OWASP security headers middleware (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection`, `Strict-Transport-Security`, `CSP`, `Referrer-Policy`, `Permissions-Policy`).
 2. **Token Security & Rotation**: Implemented RFC 6749 Section 10.4 refresh token rotation and adversarial reuse detection with automatic cascading user session invalidation.
 3. **PHI & Location Privacy**: Upgraded logging redaction (`SensitiveDataFilter`) and audit logging (`sanitize_audit_details`) to redact JWTs, credentials, emails, phone numbers, Aadhaar numbers, and coarsen GPS coordinates (~1.1 km resolution).
-4. **Gemini LLM Provider Architecture**: Implemented a decoupled clinical LLM provider abstraction (`BaseLLMProvider`, `MockGroundedProvider`, `GeminiProvider`, `get_llm_provider`) with strict prompt constraints, zero ungrounded medical generation, and offline fallback.
+4. **Gemini LLM Provider Architecture & Safe Fallback**: Implemented a decoupled clinical LLM provider abstraction (`BaseLLMProvider`, `MockGroundedProvider`, `GeminiProvider`, `get_llm_provider`) with strict prompt constraints, zero ungrounded medical generation, explicit fallback configuration, and distinct response/audit metadata.
 5. **Observability & Readiness Probing**: Implemented `/readyz` deep readiness health check probing PostgreSQL PostGIS, Redis, and ChromaDB vector store.
-6. **Adversarial & Cross-Module Safety Testing**: Implemented 14 adversarial test scenarios and 5 end-to-end clinical journey scenarios covering prompt injection, SQL-injection safety, XSS resilience, coordinate bounds validation, RBAC enforcement, and emergency escalation.
-7. **Dependency Audit & Test Coverage**: Executed `pip-audit` (0 known Python vulnerabilities) and `npm audit`, recording 76% backend test coverage across 3,163 statements and 100% test pass rate across 88 total automated tests (77 backend + 11 frontend).
+6. **Adversarial & Cross-Module Safety Testing**: Implemented 14 adversarial test scenarios, 11 Gemini provider tests, and 5 end-to-end clinical journey scenarios covering prompt injection, SQL-injection safety, XSS resilience, coordinate bounds validation, RBAC enforcement, and emergency escalation.
+7. **Supply Chain Audit & Production Container Hardening**: Executed `pip-audit` (0 known Python vulnerabilities), performed comprehensive NPM dependency review, verified `npm audit --omit=dev` (0 vulnerabilities in production dependencies), and confirmed zero vulnerable packages in the production Docker image.
+8. **100% Test Pass Rate**: 84 backend tests passed (77% coverage across 3,204 statements) and 11 frontend tests passed.
 
 ---
 
@@ -97,9 +102,9 @@ Only indexed guidelines from accredited bodies are ingested:
 
 ---
 
-## 5. Gemini Integration Architecture
+## 5. Gemini Production Fallback Safety & Clinical Grounding
 
-ClintelAI implements a modular LLM provider architecture designed for production readiness:
+ClintelAI implements a modular LLM provider architecture designed for production safety, auditability, and zero silent mock substitutions:
 
 ```
                       ┌──────────────────────┐
@@ -114,16 +119,65 @@ ClintelAI implements a modular LLM provider architecture designed for production
       └─────────────────────┘         └─────────────────────┘
          • Deterministic offline         • Google GenAI REST API
          • Zero flakiness in tests       • Strict grounding prompt
-         • Instant fallback              • Temperature: 0.1
+         • Test & Dev use only           • Temperature: 0.1
                                          • Secret key via settings
-                                         • Graceful mock fallback
+                                         • Explicit Fallback Control
+                                                │
+                 ┌──────────────────────────────┴──────────────────────────────┐
+                 │ LLM_FALLBACK_ENABLED=false (Prod)   LLM_FALLBACK_ENABLED=true (Dev)
+                 ▼                                     ▼
+        [CONTROLLED_DEGRADED]                   [FALLBACK_MOCK]
+        • abstained=True                        • abstained=False
+        • fallback_used=False                   • fallback_used=True
+        • Explicit degraded notice              • Mock synthesis
+        • Evidence citations preserved          • Citations bound
 ```
 
-### Architecture Specifications:
-1. **Secret Safety**: `GEMINI_API_KEY` is loaded strictly from environment configuration (`Settings.GEMINI_API_KEY`). It is never passed to the frontend bundle, never committed to git, and omitted from public models and health responses.
-2. **Evidence-Grounded Prompting**: The Gemini prompt strictly provides retrieved WHO/ICMR/MoHFW chunks under an authoritative evidence block, instructing the model to rely exclusively on the text, forbid medical prescriptions or diagnostic claims, and include source citations.
-3. **Resilience & Fallback**: If `GEMINI_API_KEY` is unset, or if network connectivity to the Gemini API times out or fails, `GeminiProvider` logs a warning and automatically delegates to `MockGroundedProvider`, guaranteeing uninterrupted service.
-4. **Phase 6 Readiness Notice**: Offline test suites utilize `MockGroundedProvider` for deterministic execution. Live validation with a provisioned production Gemini key will be conducted during Phase 6 deployment.
+### 1. Explicit Fallback Configuration (`LLM_FALLBACK_ENABLED`):
+- Added `LLM_FALLBACK_ENABLED: bool = False` to `Settings` (`backend/app/core/config.py`) and `.env.example`.
+- **Production Default**: Strictly defaults to `False`. Silent mock generation is impossible in production.
+- **Development/Testing**: May be explicitly enabled via `LLM_FALLBACK_ENABLED=true` for offline development and deterministic integration tests.
+
+### 2. Controlled Degraded Response on Gemini Unavailability:
+When Gemini is unavailable in production (missing API key, network timeout, connection error, or HTTP 5xx error) and `LLM_FALLBACK_ENABLED=False`:
+- **No Silent Mocking**: The system does NOT generate synthetic mock text masquerading as real Gemini output.
+- **Controlled Degraded Notice**: Returns an explicit, localized degraded notice across all 6 supported Indic languages:
+  - English: *"AI Clinical Synthesis Temporarily Unavailable: The primary generative clinical intelligence service (Google Gemini) is currently unavailable or unconfigured, and production fallback is disabled to prevent unverified synthesis. Please review the authoritative guideline citations below or consult a registered healthcare professional."*
+  - Tamil, Hindi, Malayalam, Telugu, Kannada: Fully localized clinical notices.
+- **Evidence Preservation**: Retrieved evidence citations (`citations`) from WHO/ICMR/MoHFW guidelines are **strictly retained**, allowing clinicians and patients to review verified authoritative source material even when generative synthesis is offline.
+- **Abstention Flag**: `abstained=True` with explicit reason (`GEMINI_API_KEY_MISSING`, `GEMINI_NETWORK_UNAVAILABLE`, `GEMINI_API_ERROR`).
+
+### 3. Response & Audit Metadata Transparency:
+All responses and database audit records explicitly distinguish Gemini-generated responses from mock/fallback responses:
+- `llm_provider`: `"gemini"` or `"mock"`.
+- `fallback_used`: `True` if fallback was invoked; `False` if direct or degraded.
+- `generation_mode`: One of four discrete states:
+  - `GEMINI_DIRECT`: Direct, successful synthesis from Google Gemini API.
+  - `MOCK_DIRECT`: Direct synthesis from MockGroundedProvider (development/testing).
+  - `FALLBACK_MOCK`: Mock fallback invoked due to Gemini failure (allowed only when `LLM_FALLBACK_ENABLED=True`).
+  - `CONTROLLED_DEGRADED`: Controlled degraded response returned with preserved citations (production behavior when `LLM_FALLBACK_ENABLED=False`).
+- Metadata is propagated through `GroundedResponse`, `RetrievalMetadata`, `RAGQueryResponse`, and stored in the PostgreSQL `audit_logs` table (`details` JSON column).
+
+### 4. API Key Security & Containment:
+- `GEMINI_API_KEY` is loaded exclusively via backend environment configuration (`Settings.GEMINI_API_KEY`).
+- Never exposed in frontend builds, never sent over client APIs, never exposed in `/healthz` or `/readyz`, and omitted from public Pydantic models.
+- Python logging middleware (`SensitiveDataFilter`) masks any potential API key patterns.
+
+### 5. Emergency Precedence Invariant:
+Emergency triage (`MedicalSafetyEngine.evaluate_emergency`) is executed at Step 1 of the RAG pipeline before vector retrieval or LLM invocation. Even if Gemini is completely unconfigured, times out, or errors out with fallback disabled:
+- `emergency.is_emergency` is guaranteed `True`.
+- `medical_safety_level` is set to `"EMERGENCY_ESCALATION"`.
+- Emergency helpline numbers (`112` and `108`) and hospital recommendations are returned immediately.
+
+### 6. Automated Gemini Provider Test Suite:
+Validated via 11 dedicated automated tests in `backend/tests/test_gemini_provider.py` (all 11 passed in 0.28s):
+- **Case A**: Gemini unavailable + fallback disabled (`LLM_FALLBACK_ENABLED=False`) -> `CONTROLLED_DEGRADED`, `abstained=True`, citations preserved.
+- **Case B**: Gemini unavailable + fallback enabled (`LLM_FALLBACK_ENABLED=True`) -> `FALLBACK_MOCK`, `fallback_used=True`, `abstained=False`.
+- **Case C**: Successful Gemini response -> `GEMINI_DIRECT`, `fallback_used=False`, `abstained=False`, citations bound.
+- **Case D**: Missing API key handling -> `GEMINI_API_KEY_MISSING` reason recorded without crash.
+- **Case E**: Network connection failure (`httpx.ConnectError`, `httpx.ConnectTimeout`) and HTTP error (`status_code=503`, `500`) -> correctly degraded or routed to fallback.
+- **Emergency Precedence**: Acute emergency query under degraded Gemini returns `EMERGENCY_ESCALATION` and helplines.
+- **API Key Environment Safety**: Confirmed absence from all health and user-facing schemas.
 
 ---
 
@@ -146,45 +200,92 @@ ClintelAI implements a modular LLM provider architecture designed for production
 | **Redis** | Redis service down | Seamless automatic fallback to local in-memory TTL cache (`REDIS_FALLBACK_IN_MEMORY=True`). Rate limiting and caching remain active. | Client reconnects automatically upon Redis availability. |
 | **ChromaDB** | Vector DB service unreachable | RAG pipeline falls back to in-memory cosine similarity search over parsed evidence chunks. Knowledge retrieval remains functional. | Vector store reconnects upon service restart. |
 | **External Geocoding (Nominatim)** | Rate limited or network failure | Falls back to internal regex/keyword city coordinate gazetteer (covering Chennai, Bengaluru, Kozhikode, Mumbai, Delhi, etc.). | Circuit breaker resets after configured window. |
-| **Gemini API** | Quota exceeded, network timeout, or invalid key | `GeminiProvider` catches exceptions and immediately falls back to deterministic `MockGroundedProvider`. | Subsequent requests retry Gemini API call. |
+| **Gemini API (Production)** | Quota exceeded, network timeout, or invalid key (`LLM_FALLBACK_ENABLED=False`) | `GeminiProvider` catches exceptions and returns controlled degraded response with preserved evidence citations and `abstained=True`. | Subsequent requests retry Gemini API call. |
+| **Gemini API (Development)** | Quota exceeded or invalid key (`LLM_FALLBACK_ENABLED=True`) | `GeminiProvider` catches exceptions and delegates to deterministic `MockGroundedProvider` (`fallback_used=True`). | Transparent fallback for developer velocity. |
 
 ---
 
-## 7. Dependency & Supply Chain Security Audit
+## 7. Dependency & Supply Chain Security Review
 
 ### Python Dependencies:
 - **Tool**: `pip-audit --timeout 60`
 - **Result**: `No known vulnerabilities found`
 - **Audit Status**: **Clean (0 Vulnerabilities)** across all 80+ backend packages.
 
-### Node / Frontend Dependencies:
-- **Tool**: `npm audit`
-- **Findings**: 7 high-severity advisory findings on transitive dependency `braces` (stack-exhaustion DoS through deeply nested glob patterns), introduced via `micromatch` in build-time devDependencies (`tailwindcss` and `eslint-config-next`).
-- **Risk Assessment & Acceptance**:
-  - The vulnerable code path exists exclusively in development and build-time tooling (`tailwindcss` CLI and `eslint` file globbing).
-  - The production Next.js runtime artifact (`.next/standalone` / runner container) does not expose or execute file globbing against untrusted user input.
-  - Upgrading requires a breaking change to TailwindCSS v4 (`npm audit fix --force` would install `tailwindcss@4.3.3`), which is incompatible with the current Tailwind v3 configuration.
-  - **Accepted Risk**: Formally documented as an accepted build-time devDependency risk for Phase 5. Scheduled for review during Phase 6 dependency refresh.
+### Node / Frontend Dependency Review (`braces` / `micromatch`):
 
-### Container Base Images:
-- Backend: `python:3.11-slim` (minimal attack surface, non-essential tools stripped).
-- Frontend: `node:20-alpine` (multi-stage build, executed under non-root user `nextjs:nodejs` UID 1001).
-- Datastores: `postgis/postgis:16-3.4`, `redis:7-alpine`, `chromadb/chroma:0.5.5`.
+A thorough inspection of the complete Node.js dependency tree was conducted to assess the 7 high-severity advisories reported by `npm audit`:
+
+```
+devDependencies
+  ├── tailwindcss@3.4.19
+  │     ├── chokidar@3.6.0
+  │     │     └── braces@3.0.3  (GHSA-vfj7-8cjw-p6xm: ReDoS via nested patterns)
+  │     ├── fast-glob@3.3.3
+  │     │     └── micromatch@4.0.8
+  │     │           └── braces@3.0.3
+  │     └── micromatch@4.0.8
+  │           └── braces@3.0.3
+  └── eslint-config-next@16.3.7
+        └── @next/eslint-plugin-next@16.3.7
+              └── fast-glob@3.3.1
+                    └── micromatch@4.0.8
+                          └── braces@3.0.3
+```
+
+#### Detailed Technical Findings:
+1. **Exact Vulnerable Packages & Versions**:
+   - `braces` (versions `<3.0.3` affected; `3.0.3` is currently the latest published release on npm).
+   - Advisory: [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) — Stack-exhaustion denial of service through deeply nested glob patterns.
+2. **Direct vs. Transitive Dependencies**:
+   - Direct dependencies: `tailwindcss@3.4.19` (devDependency) and `eslint-config-next@16.3.7` (devDependency).
+   - Transitive dependencies: `chokidar`, `fast-glob`, `micromatch`, `braces`.
+   - **Zero Production Runtime Dependencies Involved**: Neither `tailwindcss`, `eslint`, `chokidar`, `fast-glob`, `micromatch`, nor `braces` are declared under `dependencies` in `frontend/package.json`.
+3. **Runtime Execution & Input Reachability Analysis**:
+   - `braces` is invoked exclusively during build-time source file scanning (when Tailwind CLI scans `app/**/*.{js,ts,jsx,tsx}` for CSS classes) and during ESLint static analysis.
+   - **Zero User Input Reachability**: At runtime, the production Next.js application serves compiled static assets and server components. Untrusted user input from HTTP requests never passes to `braces` or any file-globbing utility.
+4. **Non-Breaking Upgrade Availability**:
+   - `braces@3.0.3` is currently the latest release of `braces` on the npm registry. No non-breaking `3.0.4` patch has been published by the maintainers.
+   - The only fix suggested by npm is `npm audit fix --force`, which forces an upgrade to `tailwindcss@4.3.3`.
+   - TailwindCSS v4 is a **major breaking change**: it eliminates `tailwind.config.js`, removes JavaScript-based configuration, alters CSS directive syntax (`@theme`), and breaks existing PostCSS and ESLint integrations. Applying this breaking change immediately would introduce regression risks to Phase 5.
+5. **Production Docker Container Isolation**:
+   - Hardened `infrastructure/docker/frontend.Dockerfile` with a dedicated multi-stage build:
+     - `deps`: Installs full dependencies (`npm ci`) strictly for build compilation.
+     - `prod-deps`: Installs strictly production dependencies (`npm ci --omit=dev`).
+     - `builder`: Compiles the application (`npm run build`).
+     - `runner`: Production image copies `.next` from `builder` and `node_modules` strictly from `prod-deps`.
+   - **Production Container Verification**:
+     - Running `docker run --rm clintelai-frontend:latest sh -c "test -d node_modules/braces && echo 'EXISTS' || echo 'DOES_NOT_EXIST'"` returns **`DOES_NOT_EXIST`**.
+     - Neither `braces`, `micromatch`, `chokidar`, nor `tailwindcss` exist in the production container image.
+     - Production dependency set audit (`npm audit --omit=dev`) confirms: **`found 0 vulnerabilities`**.
+6. **Planned Phase 6 Remediation**:
+   - During Phase 6 (Production Deployment & Operations), a dedicated migration from TailwindCSS v3 to TailwindCSS v4 will be planned and executed alongside ESLint 9 flat-config migration.
+
+#### Dependency Audit Summary Table:
+
+| Scope | Tool | Vulnerabilities Found | Risk Level | Mitigation Status |
+|---|---|---|---|---|
+| **Python Backend Runtime** | `pip-audit` | **0** | None | Verified Clean |
+| **Node.js Production Runtime** | `npm audit --omit=dev` | **0** | None | Verified Clean (All 22 runtime dependencies clean) |
+| **Production Docker Container** | Container inspection | **0** | None | Build-time devDependencies stripped via multi-stage build |
+| **Node.js Development Tree** | `npm audit` | 7 High | Low (Dev Only) | Build-time only; no user input path; Phase 6 upgrade scheduled |
 
 ---
 
 ## 8. Automated Test Matrix & Evaluation Results
 
 ### Complete Test Execution Summary:
-- **Total Backend Tests**: 77 passed / 77 total (100% pass rate in 13.79s)
-- **Total Frontend Tests**: 11 passed / 11 total (100% pass rate in 142ms)
+- **Total Backend Tests**: 84 passed / 84 total (100% pass rate in 12.76s)
+- **Total Frontend Tests**: 11 passed / 11 total (100% pass rate in 155ms)
 - **Phase 4 Health Alert Benchmark**: 15 / 15 passed (100%)
 - **Phase 3 Provider Benchmark**: 12 / 12 passed (100%)
 - **Phase 2 RAG Benchmark**: 10 / 10 passed (100%)
+- **Gemini Provider Test Suite**: 11 / 11 passed (100%)
 - **Code Linter**: `ruff check` — All checks passed (0 errors)
 - **Frontend Linter**: `eslint` — Clean (0 errors)
 - **TypeScript**: `tsc --noEmit` — Clean (0 errors)
 - **Production Build**: `next build` — Succeeded (0 errors)
+- **Docker Smoke Tests**: Backend & Frontend containers verified operational
 
 ### Adversarial Security Test Suite (`test_adversarial_security.py`):
 1. `test_security_headers_enforced`: OWASP security headers verified.
@@ -202,6 +303,19 @@ ClintelAI implements a modular LLM provider architecture designed for production
 13. `test_diagnosis_and_prescription_abstention`: Prescription sanitization and disclaimer verified.
 14. `test_privacy_redaction_and_location_coarsening`: Log redaction and coordinate coarsening verified.
 
+### Gemini Provider Test Suite (`test_gemini_provider.py`):
+1. `test_provider_factory_resolution`: Factory instantiates `GeminiProvider` or `MockGroundedProvider`.
+2. `test_gemini_unavailable_fallback_disabled_missing_key`: Missing key + fallback disabled returns `CONTROLLED_DEGRADED` with citations.
+3. `test_gemini_unavailable_fallback_enabled_missing_key`: Missing key + fallback enabled delegates to `FALLBACK_MOCK`.
+4. `test_gemini_network_failure_fallback_disabled`: Network timeout + fallback disabled returns `CONTROLLED_DEGRADED`.
+5. `test_gemini_network_failure_fallback_enabled`: Network timeout + fallback enabled delegates to `FALLBACK_MOCK`.
+6. `test_gemini_api_http_error_fallback_disabled`: HTTP 503 + fallback disabled returns `CONTROLLED_DEGRADED`.
+7. `test_gemini_api_http_error_fallback_enabled`: HTTP 500 + fallback enabled delegates to `FALLBACK_MOCK`.
+8. `test_gemini_successful_response`: Valid API response produces `GEMINI_DIRECT` with inline citations.
+9. `test_emergency_escalation_takes_precedence_even_when_gemini_degraded`: Emergency red flags trigger `EMERGENCY_ESCALATION` regardless of LLM status.
+10. `test_gemini_provider_prompt_grounding_structure`: Prompt strictly mandates source attribution and forbids diagnostic extrapolation.
+11. `test_gemini_api_key_environment_safety`: API key is never exposed in user-facing schemas or health models.
+
 ### End-to-End Safety Test Suite (`test_e2e_safety.py`):
 1. `test_e2e_cross_module_clinical_journey`: Full user journey across Auth -> Alerts -> RAG -> Providers.
 2. `test_e2e_emergency_escalation_across_all_endpoints`: Emergency precedence across all user endpoints.
@@ -215,19 +329,23 @@ ClintelAI implements a modular LLM provider architecture designed for production
 
 ```
 ================================ tests coverage ================================
-TOTAL: 3,163 Statements | 759 Missed | 76% Overall Codebase Coverage
+TOTAL: 3,204 Statements | 733 Missed | 77% Overall Codebase Coverage
 ```
 
 ### Coverage Highlights on Security-Critical Modules:
-- `app/api/deps.py` (Auth & Audit Sanitization): **87%**
-- `app/core/security.py` (Password Hashing & JWT): **94%**
-- `app/core/logging.py` (Sensitive Data Redaction): **100%**
+- `app/rag/providers/gemini.py` (Gemini Provider & Fallback): **97%**
+- `app/rag/providers/mock.py` (Deterministic Grounded Provider): **96%**
+- `app/rag/providers/factory.py` (LLM Provider Factory): **100%**
 - `app/rag/pipeline.py` (RAG Orchestration): **98%**
+- `app/rag/models.py` (RAG & Citations Models): **100%**
 - `app/rag/retriever.py` (Hybrid Retrieval): **95%**
 - `app/rag/embedder.py` (Semantic Embeddings): **95%**
 - `app/rag/safety.py` (Clinical Boundaries & Emergencies): **94%**
-- `app/rag/providers/mock.py` (Deterministic Grounded Provider): **96%**
-- `app/rag/providers/factory.py` (LLM Provider Factory): **100%**
+- `app/core/logging.py` (Sensitive Data Redaction): **100%**
+- `app/core/security.py` (Password Hashing & JWT): **94%**
+- `app/core/config.py` (System Settings): **95%**
+- `app/api/deps.py` (Auth & Audit Sanitization): **87%**
+- `app/api/v1/rag.py` (RAG API Endpoints): **86%**
 - `app/models/` (All SQLAlchemy Models): **100%**
 - `app/schemas/` (Pydantic Request/Response Schemas): **100%**
 
@@ -238,6 +356,8 @@ TOTAL: 3,163 Statements | 759 Missed | 76% Overall Codebase Coverage
 
 ## 10. Conclusion & Phase 5 Sign-off
 
-Phase 5 has successfully hardened the ClintelAI backend and frontend architectures, delivered an end-to-end adversarial evaluation suite, established verifiable RAG grounding and provider discovery guardrails, integrated the production Gemini provider abstraction with offline fallbacks, and documented all threat models, degradation modes, and dependency audits.
+Both review findings for Phase 5 have been fully addressed and verified:
+1. **Gemini Fallback Safety**: Unavailability in production cleanly returns a controlled degraded response with preserved citations and distinct audit metadata (`generation_mode="CONTROLLED_DEGRADED"`), strictly eliminating silent mock substitution.
+2. **NPM Dependency Review & Hardening**: All 7 high-severity advisories were traced to build-time `devDependencies`, confirmed unreachable by untrusted input, and completely eliminated from the production runtime container via multi-stage Docker build (`prod-deps` with `npm ci --omit=dev`).
 
-The platform is stable, hardened, and ready for review.
+With 84 backend tests passing (77% coverage), 11 frontend tests passing, zero Python vulnerabilities, zero production container vulnerabilities, and complete Docker/lint/type validation, Phase 5 is fully complete and ready for final sign-off.

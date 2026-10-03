@@ -52,11 +52,15 @@ async def query_clinical_knowledge(
         "query_masked": sanitize_query_for_audit(request_data.query),
         "language": request_data.language,
         "abstained": response.abstained,
+        "abstention_reason": response.abstention_reason,
         "is_emergency": response.emergency.is_emergency,
         "emergency_level": response.emergency.level,
         "citations_count": len(response.citations),
         "confidence_score": response.confidence_score,
         "top_score": response.retrieval_metadata.top_similarity_score,
+        "llm_provider": response.llm_provider,
+        "fallback_used": response.fallback_used,
+        "generation_mode": response.retrieval_metadata.generation_mode,
     }
 
     try:

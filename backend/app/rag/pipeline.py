@@ -108,12 +108,16 @@ class RAGPipeline:
         )
 
         # 3. Grounded Synthesis & Citation Binding (or Abstention)
-        answer, citations, abstained, abstention_reason = GroundedGenerator.generate_response(
+        gen_res = GroundedGenerator.generate_response(
             query=request.query,
             evidence=evidence,
             language=request.language,
             emergency_detected=emergency.is_emergency,
         )
+        answer, citations, abstained, abstention_reason = gen_res[:4]
+        llm_provider = getattr(gen_res, "llm_provider", settings.LLM_PROVIDER)
+        fallback_used = getattr(gen_res, "fallback_used", False)
+        generation_mode = getattr(gen_res, "generation_mode", "DIRECT")
 
         # 4. Confidence Score Estimation
         if abstained or not evidence:
@@ -139,11 +143,16 @@ class RAGPipeline:
             medical_safety_level="EMERGENCY_ESCALATION" if emergency.is_emergency else "INFORMATIONAL_VERIFIED",
             safety_disclaimer=disclaimer,
             emergency=emergency,
+            llm_provider=llm_provider,
+            fallback_used=fallback_used,
             retrieval_metadata=RetrievalMetadata(
                 chunks_evaluated=self.vector_store.get_chunk_count(),
                 chunks_retained=len(evidence),
                 top_similarity_score=evidence[0][1] if evidence else 0.0,
                 retrieval_strategy="hybrid_dense_lexical_rrf",
                 latency_ms=latency_ms,
+                llm_provider=llm_provider,
+                fallback_used=fallback_used,
+                generation_mode=generation_mode,
             ),
         )

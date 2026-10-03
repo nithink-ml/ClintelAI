@@ -1,13 +1,18 @@
 FROM node:20-alpine AS base
 
-# Install dependencies only when needed
+# Install all dependencies (development + production) for build step
 FROM base AS deps
 WORKDIR /app
-
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm ci
 
-# Rebuild the source code only when needed
+# Install strictly production dependencies for the production runtime container
+FROM base AS prod-deps
+WORKDIR /app
+COPY frontend/package.json frontend/package-lock.json* ./
+RUN npm ci --omit=dev
+
+# Rebuild the source code using build dependencies
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -16,7 +21,7 @@ COPY frontend/ ./
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-# Production image, copy all the files and run next
+# Production image, copy only production dependencies and build artifacts
 FROM base AS runner
 WORKDIR /app
 
@@ -28,7 +33,7 @@ RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
 USER nextjs

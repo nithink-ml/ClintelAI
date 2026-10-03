@@ -48,6 +48,7 @@ class Settings(BaseSettings):
 
     # LLM & RAG
     LLM_PROVIDER: str = "mock"
+    LLM_FALLBACK_ENABLED: bool = False
     GEMINI_API_KEY: str = ""
     OPENAI_API_KEY: str = ""
     EMBEDDING_MODEL: str = "sentence-transformers/all-MiniLM-L6-v2"

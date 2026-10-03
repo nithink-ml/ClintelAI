@@ -89,12 +89,22 @@ class MockGroundedProvider(BaseLLMProvider):
         language: str = "en",
         emergency_detected: bool = False,
     ) -> tuple[str, list[Citation], bool, str | None]:
+        from app.rag.models import GroundedResponse
+
         # 1. Abstention Check: If no evidence passed threshold
         if not evidence or len(evidence) == 0:
             abstention_msg = self.MULTILINGUAL_ABSTENTION_MESSAGES.get(
                 language, self.MULTILINGUAL_ABSTENTION_MESSAGES["en"]
             )
-            return abstention_msg, [], True, "SIMILARITY_BELOW_THRESHOLD_OR_NO_EVIDENCE"
+            return GroundedResponse(
+                answer=abstention_msg,
+                citations=[],
+                abstained=True,
+                abstention_reason="SIMILARITY_BELOW_THRESHOLD_OR_NO_EVIDENCE",
+                llm_provider="mock",
+                fallback_used=False,
+                generation_mode="MOCK_DIRECT",
+            )
 
         # Check if top score is reasonably strong
         _, top_score = evidence[0]
@@ -102,7 +112,15 @@ class MockGroundedProvider(BaseLLMProvider):
             abstention_msg = self.MULTILINGUAL_ABSTENTION_MESSAGES.get(
                 language, self.MULTILINGUAL_ABSTENTION_MESSAGES["en"]
             )
-            return abstention_msg, [], True, "INSUFFICIENT_EVIDENCE_SCORE"
+            return GroundedResponse(
+                answer=abstention_msg,
+                citations=[],
+                abstained=True,
+                abstention_reason="INSUFFICIENT_EVIDENCE_SCORE",
+                llm_provider="mock",
+                fallback_used=False,
+                generation_mode="MOCK_DIRECT",
+            )
 
         # 2. Build Structured Citations
         citations: list[Citation] = []
@@ -159,4 +177,12 @@ class MockGroundedProvider(BaseLLMProvider):
         full_answer = "\n".join(answer_lines)
         sanitized_answer = MedicalSafetyEngine.sanitize_medical_text(full_answer)
 
-        return sanitized_answer, citations, False, None
+        return GroundedResponse(
+            answer=sanitized_answer,
+            citations=citations,
+            abstained=False,
+            abstention_reason=None,
+            llm_provider="mock",
+            fallback_used=False,
+            generation_mode="MOCK_DIRECT",
+        )
