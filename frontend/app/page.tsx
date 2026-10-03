@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   MessageSquareHeart,
   Stethoscope,
+  BellRing,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +28,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useLanguage } from "@/lib/i18n/language-context";
 import { ClinicalAssistant } from "@/components/assistant/clinical-assistant";
 import { ProviderDiscovery } from "@/components/providers/provider-discovery";
+import { HealthAlertsFeed } from "@/components/alerts/health-alerts-feed";
 
 interface BackendHealthData {
   status: string;
@@ -42,7 +44,7 @@ export default function HomePage() {
   const { user, isAuthenticated, setIsAuthModalOpen, setAuthModalMode, setIsProfileModalOpen } = useAuth();
   const { t, language, setLanguage, languages } = useLanguage();
 
-  const [activeTab, setActiveTab] = useState<"assistant" | "providers">("assistant");
+  const [activeTab, setActiveTab] = useState<"assistant" | "providers" | "alerts">("assistant");
   const [backendHealth, setBackendHealth] = useState<BackendHealthData | null>(null);
 
   useEffect(() => {
@@ -58,6 +60,8 @@ export default function HomePage() {
       const hash = window.location.hash.replace("#", "");
       if (hash === "providers" || hash === "doctorFinder") {
         setActiveTab("providers");
+      } else if (hash === "alerts" || hash === "healthAlerts") {
+        setActiveTab("alerts");
       } else if (hash === "assistant") {
         setActiveTab("assistant");
       }
@@ -171,14 +175,14 @@ export default function HomePage() {
 
       {/* Interactive Tabs Header: Phase 2 Assistant & Phase 3 Provider Discovery */}
       <section className="max-w-5xl mx-auto w-full space-y-6">
-        <div className="flex items-center justify-center p-1.5 bg-slate-100/90 backdrop-blur-xs rounded-2xl border border-slate-200/80 max-w-xl mx-auto shadow-xs">
+        <div className="flex items-center justify-center p-1.5 bg-slate-100/90 backdrop-blur-xs rounded-2xl border border-slate-200/80 max-w-2xl mx-auto shadow-xs">
           <button
             type="button"
             onClick={() => {
               setActiveTab("assistant");
               window.location.hash = "assistant";
             }}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
               activeTab === "assistant"
                 ? "bg-white text-slate-900 shadow-sm"
                 : "text-slate-600 hover:text-slate-900"
@@ -197,7 +201,7 @@ export default function HomePage() {
               setActiveTab("providers");
               window.location.hash = "providers";
             }}
-            className={`flex-1 py-2.5 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+            className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
               activeTab === "providers"
                 ? "bg-white text-slate-900 shadow-sm"
                 : "text-slate-600 hover:text-slate-900"
@@ -209,14 +213,31 @@ export default function HomePage() {
               Phase 3
             </span>
           </button>
+
+          <button
+            type="button"
+            onClick={() => {
+              setActiveTab("alerts");
+              window.location.hash = "alerts";
+            }}
+            className={`flex-1 py-2.5 px-3 sm:px-4 rounded-xl text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-2 ${
+              activeTab === "alerts"
+                ? "bg-white text-slate-900 shadow-sm"
+                : "text-slate-600 hover:text-slate-900"
+            }`}
+          >
+            <BellRing className="w-4 h-4 text-red-600 shrink-0" />
+            <span>{t.nav.healthAlerts}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 font-mono">
+              Phase 4
+            </span>
+          </button>
         </div>
 
         {/* Tab Panel Content */}
-        {activeTab === "assistant" ? (
-          <ClinicalAssistant />
-        ) : (
-          <ProviderDiscovery />
-        )}
+        {activeTab === "assistant" && <ClinicalAssistant />}
+        {activeTab === "providers" && <ProviderDiscovery />}
+        {activeTab === "alerts" && <HealthAlertsFeed />}
       </section>
 
       {/* Core Architectural Pillars */}
@@ -291,7 +312,13 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        <Card className="hover:border-rose-300">
+        <Card
+          onClick={() => {
+            setActiveTab("alerts");
+            window.location.hash = "alerts";
+          }}
+          className="hover:border-rose-300 cursor-pointer transition-all hover:shadow-md"
+        >
           <CardHeader>
             <div className="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mb-2">
               <Activity className="w-6 h-6" />
@@ -303,10 +330,8 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between text-xs font-semibold text-rose-600 pt-2 border-t border-slate-100">
-              <span>MoHFW & State Alerts</span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                Phase 4
-              </span>
+              <span>Active in Phase 4</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
             </div>
           </CardContent>
         </Card>

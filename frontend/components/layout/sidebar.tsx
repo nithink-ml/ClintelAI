@@ -64,8 +64,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       icon: <BellRing className="w-4 h-4" />,
       active: false,
       phaseBadge: "Phase 4",
-      locked: true,
-      onClick: () => {},
+      locked: false,
+      onClick: () => handleNavigate("#alerts"),
     },
     {
       id: "profile",

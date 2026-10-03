@@ -1,0 +1,521 @@
+[
+  {
+    "id": "11111111-1111-4111-a111-111111111111",
+    "title": "Dengue & Monsoon Vector-Borne Epidemiological Advisory",
+    "summary": "State Health Department issues high-vigilance notice for vector-borne dengue and chikungunya transmission across Chennai Metropolitan Area.",
+    "content": "The Directorate of Public Health and Preventive Medicine, Tamil Nadu, has recorded localized clusters of Dengue virus transmission following seasonal monsoon stagnation. Municipal fogging and source-reduction drives are underway. Residents are strongly advised to inspect overhead tanks, discarded tyres, and air cooler trays for Aedes mosquito larvae. In case of sustained high fever with severe eye pain or bleeding gums, seek immediate clinical triage at the nearest Urban Community Health Centre or District Hospital.",
+    "category": "infectious_disease",
+    "severity": "HIGH",
+    "status": "ACTIVE",
+    "source_name": "Tamil Nadu Directorate of Public Health (TN-DPH)",
+    "source_url": "https://dph.tn.gov.in/alerts/2026/dengue-vector-control",
+    "source_reference_id": "TN-DPH/ADV-2026/09",
+    "issued_at": "2026-09-28T09:00:00Z",
+    "valid_from": "2026-09-28T09:00:00Z",
+    "valid_until": "2026-10-31T23:59:59Z",
+    "country": "India",
+    "state": "Tamil Nadu",
+    "district": "Chennai",
+    "city": "Chennai",
+    "locality": "Chennai Metropolitan Area",
+    "latitude": 13.0827,
+    "longitude": 80.2707,
+    "affected_radius_km": 35.0,
+    "symptoms": [
+      "High continuous fever (103°F-104°F)",
+      "Severe retro-orbital (behind-the-eye) headache",
+      "Excruciating muscle, bone, and joint aches (breakbone fever)",
+      "Nausea and persistent vomiting",
+      "Petechial skin rash appearing 3-4 days after fever onset"
+    ],
+    "precautionary_measures": [
+      "Eliminate open pools of stagnant water in domestic containers, plant pots, and cisterns every 7 days.",
+      "Apply DEET, Picaridin, or Oil of Lemon Eucalyptus insect repellent during morning and late afternoon hours.",
+      "Wear full-sleeved protective cotton clothing and install mesh screens on residential windows.",
+      "AVOID self-medicating with Aspirin, Ibuprofen, or other NSAIDs as they increase hemorrhage risk; use paracetamol under medical supervision.",
+      "Report to an emergency facility immediately if experiencing severe abdominal pain, persistent vomiting, or mucosal bleeding."
+    ],
+    "helpline_numbers": ["104", "108", "044-29510400"],
+    "translations": {
+      "ta": {
+        "title": "டெங்கு மற்றும் மழைக்கால கொசுவால் பரவும் நோய் தடுப்பு எச்சரிக்கை",
+        "summary": "சென்னை மாநகரப் பகுதியில் டெங்கு வைரஸ் பரவல் தடுப்பு முன்னெச்சரிக்கை நடவடிக்கைகளை தமிழ்நாடு பொது சுகாதாரத்துறை தீவிரப்படுத்தியுள்ளது.",
+        "content": "மழைக்காலத்தை தொடர்ந்து சென்னை மற்றும் புறநகர் பகுதிகளில் தேங்கும் நல்ல தண்ணீரில் ஏடிஸ் கொசுக்கள் உற்பத்தியாக வாய்ப்புள்ளது. வீடுகளில் உள்ள மேல்நிலைத் தொட்டிகள் மற்றும் குளிர்சாதனப் பெட்டி தட்டுகளை வாரந்தோறும் சுத்தம் செய்ய வேண்டும். கடுமையான காய்ச்சல் மற்றும் கண் வலி இருந்தால் உடனடியாக அரசு ஆரம்ப சுகாதார நிலையத்தை அணுகவும்.",
+        "precautionary_measures": [
+          "வீட்டு வளாகத்தில் தண்ணீர் தேங்காமல் பார்த்துக் கொள்ளவும்.",
+          "கொசு கடிக்காமல் இருக்க முழுக்கை ஆடைகளை அணியவும்.",
+          "ஆஸ்பிரின், இப்யூபுரூஃபன் போன்ற மருந்துகளை சுயமாக உட்கொள்வதை தவிர்க்கவும்; பாராசிட்டமால் மட்டுமே பயன்படுத்தவும்.",
+          "தீவிர வயிற்று வலி அல்லது வாந்தி இருந்தால் உடனடியாக மருத்துவமனைக்கு செல்லவும்."
+        ]
+      },
+      "hi": {
+        "title": "डेंगू और मानसून वेक्टर-जनित संक्रामक रोग चेतावनी",
+        "summary": "चेन्नई महानगरीय क्षेत्र में डेंगू के मामलों में वृद्धि को देखते हुए सार्वजनिक स्वास्थ्य विभाग ने उच्च सतर्कता परामर्श जारी किया है।",
+        "content": "तमिलनाडु सार्वजनिक स्वास्थ्य निदेशालय ने हालिया मानसूनी जलभराव के बाद एडीज मच्छरों के प्रजनन को रोकने के लिए व्यापक अभियान शुरू किया है। नागरिकों से अपील है कि वे टंकियों और कूलरों में पानी जमा न होने दें। तेज बुखार और जोड़ों के दर्द की स्थिति में तुरंत नजदीकी स्वास्थ्य केंद्र से संपर्क करें।",
+        "precautionary_measures": [
+          "सप्ताह में एक बार सभी जलपात्रों को खाली कर सुखाएं।",
+          "मच्छर भगाने वाली क्रीम का प्रयोग करें और पूरी आस्तीन के कपड़े पहनें।",
+          "बिना डॉक्टर की सलाह के एस्पिरिन या ब्रूफेन न लें।"
+        ]
+      }
+    },
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "ClintelAI Epidemiological Ingestion Engine",
+      "source_authority_tier": "STATE_HEALTH_DIRECTORATE",
+      "bulletin_hash": "sha256-dph-tn-20260928-adv09"
+    }
+  },
+  {
+    "id": "22222222-2222-4222-a222-222222222222",
+    "title": "Nipah Virus Surveillance and Containment Advisory",
+    "summary": "Department of Health Services Kerala issues critical epidemiological alert and contact-tracing protocol across Kozhikode and Malappuram districts.",
+    "content": "Following laboratory-confirmed index cases of Nipah virus (NiV) infection in Northern Kerala, the Directorate of Health Services has established a 5-kilometer containment perimeter. Rigorous contact-tracing, quarantine of primary contacts, and fever surveys are being executed by rapid response medical teams. Fruit bats (Pteropus medius) are the natural reservoir hosts. The public is advised to maintain strict respiratory etiquette, refrain from visiting containment zones, and report unpasteurized sap or animal-bitten fruit consumption to public health helplines.",
+    "category": "outbreak",
+    "severity": "CRITICAL",
+    "status": "ACTIVE",
+    "source_name": "Directorate of Health Services Kerala (DHS Kerala)",
+    "source_url": "https://dhs.kerala.gov.in/bulletin/nipah-containment-zone-advisory",
+    "source_reference_id": "KER-DHS/NIPAH-2026/02",
+    "issued_at": "2026-09-30T06:30:00Z",
+    "valid_from": "2026-09-30T06:30:00Z",
+    "valid_until": "2026-10-25T23:59:59Z",
+    "country": "India",
+    "state": "Kerala",
+    "district": "Kozhikode",
+    "city": "Kozhikode",
+    "locality": "Kozhikode & Malappuram Border Zone",
+    "latitude": 11.2588,
+    "longitude": 75.7804,
+    "affected_radius_km": 50.0,
+    "symptoms": [
+      "Acute fever and severe throbbing headache",
+      "Myalgia (body and muscle pain)",
+      "Sore throat, persistent dry cough, and respiratory distress",
+      "Drowsiness, disorientation, and acute encephalitis symptoms",
+      "Rapid neurological deterioration and mental confusion within 24-48 hours"
+    ],
+    "precautionary_measures": [
+      "Do NOT consume raw date palm sap (toddy) or fruits that show bird or animal teeth marks.",
+      "Thoroughly peel and wash all fresh vegetables and fruits under running clean water.",
+      "Wear double surgical masks or certified N95 respirators in designated surveillance perimeters.",
+      "Healthcare workers MUST practice strict barrier nursing and utilize Level 3 PPE when handling suspected acute encephalitis patients.",
+      "Immediately report any contact with confirmed cases to the district control room; do NOT rely on home remedies."
+    ],
+    "helpline_numbers": ["0471-2552056", "104", "108"],
+    "translations": {
+      "ml": {
+        "title": "നിപ വൈറസ് പ്രതിരോധവും ജാഗ്രതാ നിർദ്ദേശവും",
+        "summary": "കോഴിക്കോട്, മലപ്പുറം ജില്ലകളിൽ നിപ വൈറസ് രോഗബാധയ്ക്കെതിരെ ആരോഗ്യവകുപ്പ് അതീവ ജാഗ്രത പ്രഖ്യാപിച്ചു.",
+        "content": "വവ്വാലുകൾ കടിച്ച പഴങ്ങളോ പാനീയങ്ങളോ കഴിക്കാൻ പാടില്ല. രോഗലക്ഷണങ്ങൾ കണ്ടാൽ ഉടൻ തന്നെ അടുത്തുള്ള സർക്കാർ മെഡിക്കൽ കോളേജ് ഐസൊലേഷൻ വാർഡിൽ ചികിത്സ തേടുക.",
+        "precautionary_measures": [
+          "നിലത്തു വീണതോ മൃഗങ്ങൾ കടിച്ചതോ ആയ പഴങ്ങൾ കഴിക്കരുത്.",
+          "കൈകൾ സോപ്പും വെള്ളവും ഉപയോഗിച്ച് വൃത്തിയായി കഴുകുക.",
+          "ലക്ഷണങ്ങൾ ഉള്ളവർ ഉടൻ കൺട്രോൾ റൂമിൽ ബന്ധപ്പെടുക."
+        ]
+      },
+      "ta": {
+        "title": "நிபா வைரஸ் கண்காணிப்பு மற்றும் சுகாதார எச்சரிக்கை",
+        "summary": "கேரள மாநில எல்லைப் பகுதிகளை ஒட்டியுள்ள மாவட்டங்களில் நிபா வைரஸ் தடுப்பு முன்னெச்சரிக்கை நடவடிக்கைகளை சுகாதாரத்துறை அறிவுறுத்தியுள்ளது.",
+        "content": "விலங்குகள் அல்லது வெளவால்கள் கடித்த பழங்களை சாப்பிட வேண்டாம். காய்ச்சல் மற்றும் மயக்கம் இருந்தால் உடனடியாக அரசு மருத்துவமனையை அணுகவும்.",
+        "precautionary_measures": [
+          "வெளவால்கள் கடித்த பழங்களை தொடவோ சாப்பிடவோ கூடாது.",
+          "என்95 முகக்கவசம் அணியவும்."
+        ]
+      }
+    },
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "National Institute of Virology & Kerala DHS Coordination",
+      "source_authority_tier": "STATE_AND_APEX_EPIDEMIOLOGY",
+      "bulletin_hash": "sha256-nipah-ker-20260930-b02"
+    }
+  },
+  {
+    "id": "33333333-3333-4333-a333-333333333333",
+    "title": "Heatwave Extreme Temperature Alert and Hydration Directive",
+    "summary": "Karnataka Health Department and IMD declare Orange Alert for severe heat conditions in Bengaluru Urban and plateau districts.",
+    "content": "The India Meteorological Department (IMD) in conjunction with the Department of Health & Family Welfare has recorded maximum daytime temperatures exceeding 38.5°C across Bengaluru Urban, presenting substantial risks of heat exhaustion and heatstroke. Vulnerable populations including outdoor laborers, pregnant women, children, and geriatric individuals must restrict outdoor exposure between 12:00 PM and 3:00 PM. Municipal water stations and ORS distribution kiosks have been operationalized across major transit hubs.",
+    "category": "heatwave",
+    "severity": "HIGH",
+    "status": "ACTIVE",
+    "source_name": "Karnataka Department of Health and Family Welfare",
+    "source_url": "https://karnataka.gov.in/hfw/heatwave-red-alert-2026",
+    "source_reference_id": "KAR-HFW/HW-2026/04",
+    "issued_at": "2026-10-01T04:00:00Z",
+    "valid_from": "2026-10-01T04:00:00Z",
+    "valid_until": "2026-10-15T23:59:59Z",
+    "country": "India",
+    "state": "Karnataka",
+    "district": "Bengaluru Urban",
+    "city": "Bengaluru",
+    "locality": "Bengaluru Urban & Rural Districts",
+    "latitude": 12.9716,
+    "longitude": 77.5946,
+    "affected_radius_km": 40.0,
+    "symptoms": [
+      "Extreme thirst and intense dry mouth",
+      "Heavy sweating accompanied by cold, pale, and clammy skin (heat exhaustion)",
+      "High body temperature (>104°F) with hot, red, dry skin without sweating (heatstroke emergency)",
+      "Throbbing headache, lightheadedness, and syncope (fainting)",
+      "Nausea, confusion, and muscle cramps"
+    ],
+    "precautionary_measures": [
+      "Stay hydrated by drinking water, buttermilk (chaas), tender coconut water, and Oral Rehydration Salts (ORS) frequently, even if not feeling thirsty.",
+      "Avoid strenuous outdoor activities between 12:00 PM and 3:30 PM.",
+      "Wear lightweight, loose-fitting, light-colored cotton garments and use umbrellas or wide-brimmed hats.",
+      "Never leave children or pets inside parked vehicles under any circumstance.",
+      "If someone faints or exhibits altered consciousness with hot dry skin, move them to shade immediately, apply cold wet sponges, and call 108/112."
+    ],
+    "helpline_numbers": ["104", "108", "112"],
+    "translations": {
+      "kn": {
+        "title": "ತೀವ್ರ ಬಿಸಿಗಾಳಿ ಮುನ್ನೆಚ್ಚರಿಕೆ ಮತ್ತು ಸಾರ್ವಜನಿಕ ಆರೋಗ್ಯ ಸಲಹೆ",
+        "summary": "ಬೆಂಗಳೂರು ನಗರ ಮತ್ತು ಸುತ್ತಮುತ್ತಲಿನ ಜಿಲ್ಲೆಗಳಲ್ಲಿ ತಾಪಮಾನ ಹೆಚ್ಚಳದ ಹಿನ್ನೆಲೆಯಲ್ಲಿ ಆರೋಗ್ಯ ಇಲಾಖೆ ಎಚ್ಚರಿಕೆ ನೀಡಿದೆ.",
+        "content": "ಮಧ್ಯಾಹ್ನ 12 ರಿಂದ 3 ಗಂಟೆಯವರೆಗೆ ನೇರ ಸೂರ್ಯನ ಬಿಸಿಲಿನಲ್ಲಿ ಓಡಾಡುವುದನ್ನು ತಪ್ಪಿಸಿ. ಸಾಕಷ್ಟು ನೀರು, ಮಜ್ಜಿಗೆ ಮತ್ತು ಎಳನೀರು ಕುಡಿಯಿರಿ. ತುರ್ತು ಸಂದರ್ಭದಲ್ಲಿ 108 ಗೆ ಕರೆ ಮಾಡಿ.",
+        "precautionary_measures": [
+          "ಸಾಕಷ್ಟು ನೀರು ಮತ್ತು ದ್ರವಾಹಾರಗಳನ್ನು ಸೇವಿಸಿ.",
+          "ಹತ್ತಿಯ ತಿಳಿ ಬಣ್ಣದ ಬಟ್ಟೆಗಳನ್ನು ಧರಿಸಿ.",
+          "ಬಿಸಿಲಿನಲ್ಲಿ ನಿಲ್ಲಿಸಿದ ವಾಹನಗಳಲ್ಲಿ ಮಕ್ಕಳನ್ನು ಬಿಡಬೇಡಿ."
+        ]
+      },
+      "te": {
+        "title": "తీవ్ర వడగాల్పుల హెచ్చరిక మరియు ఆరోగ్య సలహా",
+        "summary": "ఎండ తీవ్రత పెరుగుతున్నందున ప్రజలు తగిన జాగ్రత్తలు తీసుకోవాలని ఆరోగ్య శాఖ సూచించింది.",
+        "content": "మధ్యాహ్న సమయాల్లో బయటకు వెళ్లడం తగ్గించండి. ఓఆర్ఎస్ మరియు మజ్జిగ పుష్కలంగా తాగండి.",
+        "precautionary_measures": [
+          "శరీరంలో నీటి శాతం తగ్గకుండా చూసుకోండి.",
+          "వడదెబ్బ తగిలితే వెంటనే 108 కు సమాచారం అందించండి."
+        ]
+      }
+    },
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "IMD Regional Meteorological Centre & Karnataka HFW",
+      "source_authority_tier": "STATE_HEALTH_AND_METEOROLOGY",
+      "bulletin_hash": "sha256-imd-kar-20261001-hw04"
+    }
+  },
+  {
+    "id": "44444444-4444-4444-a444-444444444444",
+    "title": "Severe Air Quality Index (AQI > 400) Smog & Pulmonary Warning",
+    "summary": "Central Pollution Control Board and DGHS Delhi issue Severe Category respiratory warning across the National Capital Region.",
+    "content": "Ambient air quality monitoring stations across Delhi-NCR have recorded PM2.5 levels exceeding 420 µg/m³, triggering GRAP-IV emergency protocols. Fine particulate matter penetrates deep into pulmonary alveoli, exacerbating preexisting bronchial asthma, chronic bronchitis, ischemic heart disease, and pediatric lung ailments. High-efficiency filtration masks (N95/FFP2) are mandatory for essential outdoor exposure. Schools and non-emergency civic operations are transitioned to hybrid models to reduce community inhalation load.",
+    "category": "air_quality",
+    "severity": "HIGH",
+    "status": "ACTIVE",
+    "source_name": "Central Pollution Control Board (CPCB)",
+    "source_url": "https://cpcb.nic.in/air-quality-bulletin-delhi-ncr-severe",
+    "source_reference_id": "CPCB/AQI-NCR/2026/01",
+    "issued_at": "2026-10-02T02:00:00Z",
+    "valid_from": "2026-10-02T02:00:00Z",
+    "valid_until": "2026-10-20T23:59:59Z",
+    "country": "India",
+    "state": "Delhi",
+    "district": "Central Delhi",
+    "city": "New Delhi",
+    "locality": "National Capital Region (Delhi-NCR)",
+    "latitude": 28.6139,
+    "longitude": 77.2090,
+    "affected_radius_km": 60.0,
+    "symptoms": [
+      "Stinging ocular irritation, excessive lacrimation, and redness",
+      "Severe dry cough, hoarseness, and pharyngeal burning",
+      "Wheezing, shortness of breath, and chest heaviness",
+      "Exacerbation of asthma requiring frequent rescue bronchodilator use",
+      "Fatigue, sinus congestion, and frontal tension headaches"
+    ],
+    "precautionary_measures": [
+      "Avoid all early morning and late evening outdoor physical exercise when particulate thermal inversion is maximum.",
+      "Wear certified N95 or N99 respirators fitted snugly over nose and mouth when stepping outside; standard cloth masks do not block PM2.5.",
+      "Keep windows and exterior vents sealed during peak smog hours; run HEPA air cleaners where feasible.",
+      "Asthma and COPD patients MUST keep emergency rescue inhalers (Salbutamol) readily accessible at all times.",
+      "Do not burn biomass, leaves, or garbage; report open burning to municipal helplines."
+    ],
+    "helpline_numbers": ["011-22307145", "108", "112"],
+    "translations": {
+      "hi": {
+        "title": "गंभीर वायु गुणवत्ता सूचकांक (एक्यूआई > 400) एवं श्वसन स्वास्थ्य परामर्श",
+        "summary": "केंद्रीय प्रदूषण नियंत्रण बोर्ड (सीपीसीबी) ने दिल्ली-एनसीआर में गंभीर वायु प्रदूषण के मद्देनजर स्वास्थ्य चेतावनी जारी की है।",
+        "content": "हवा में पीएम 2.5 का स्तर अत्यधिक खतरनाक स्तर पर पहुंच गया है। बच्चों, बुजुर्गों और दमा रोगियों को घर के अंदर रहने की सख्त सलाह दी जाती है। बाहर निकलने पर एन-95 मास्क का अनिवार्य रूप से प्रयोग करें।",
+        "precautionary_measures": [
+          "सुबह और शाम के समय टहलने या खुली हवा में व्यायाम करने से बचें।",
+          "बाहर जाते समय केवल एन-95 मास्क का प्रयोग करें, कपड़े का मास्क पीएम 2.5 को नहीं रोकता।",
+          "दमा रोगी अपनी इनहेलर दवाएं हमेशा अपने पास रखें।"
+        ]
+      }
+    },
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "Central Pollution Control Board Central Laboratory",
+      "source_authority_tier": "NATIONAL_ENVIRONMENTAL_REGULATOR",
+      "bulletin_hash": "sha256-cpcb-delhi-20261002-aqi01"
+    }
+  },
+  {
+    "id": "55555555-5555-4555-a555-555555555555",
+    "title": "National Measles-Rubella (MR) Supplementary Immunization Campaign",
+    "summary": "Ministry of Health and Family Welfare launches nationwide supplemental immunization campaign for children aged 9 months to 5 years.",
+    "content": "The Ministry of Health and Family Welfare, Government of India, in technical partnership with the World Health Organization (WHO) and UNICEF, announces a comprehensive nationwide supplementary immunization campaign aimed at eliminating Measles and controlling congenital Rubella syndrome. All children between 9 months and 5 years of age are eligible to receive one additional dose of MR vaccine, irrespective of previous vaccination status. Special outreach sessions are operational across all Anganwadi centres, Government primary health centres, and municipal dispensaries without user fees.",
+    "category": "vaccination_drive",
+    "severity": "INFORMATIONAL",
+    "status": "ACTIVE",
+    "source_name": "Ministry of Health and Family Welfare (MoHFW)",
+    "source_url": "https://mohfw.gov.in/immunization/mr-campaign-2026",
+    "source_reference_id": "MoHFW/IMMUN-MR/2026/08",
+    "issued_at": "2026-09-15T08:00:00Z",
+    "valid_from": "2026-09-15T08:00:00Z",
+    "valid_until": "2026-11-30T23:59:59Z",
+    "country": "India",
+    "state": "ALL_INDIA",
+    "district": null,
+    "city": null,
+    "locality": "All States & Union Territories",
+    "latitude": null,
+    "longitude": null,
+    "affected_radius_km": null,
+    "symptoms": [
+      "High fever starting 10-12 days after exposure",
+      "Coryza (runny nose), cough, and red watery eyes (conjunctivitis)",
+      "Small white spots inside the cheeks (Koplik spots)",
+      "Generalized erythematous maculopapular rash spreading from hairline downward"
+    ],
+    "precautionary_measures": [
+      "Check your child's Mother and Child Protection (MCP) card to ensure routine immunization milestones are complete.",
+      "Bring all eligible children aged 9 months to 5 years to the nearest designated Primary Health Centre or Anganwadi.",
+      "The vaccine is safe, highly effective, and provided free of cost by the Government of India.",
+      "If a child develops high fever with rash, isolate from other infants and notify the local ASHA or ANM worker immediately."
+    ],
+    "helpline_numbers": ["1075", "104"],
+    "translations": {
+      "ta": {
+        "title": "தேசிய தட்டம்மை-ரூபெல்லா தடுப்பூசி சிறப்பு முகாம்",
+        "summary": "9 மாதம் முதல் 5 வயது வரையிலான அனைத்து குழந்தைகளுக்கும் இலவச தட்டம்மை-ரூபெல்லா தடுப்பூசி வழங்க மத்திய சுகாதார அமைச்சகம் அறிவுறுத்தல்.",
+        "content": "அனைத்து அரசு ஆரம்ப சுகாதார நிலையங்கள் மற்றும் அங்கன்வாடி மையங்களில் இலவசமாக தடுப்பூசி செலுத்தப்படுகிறது. முந்தைய தவணைகளை எடுத்திருந்தாலும் இந்த கூடுதல் தவணையை தவறாமல் செலுத்தவும்.",
+        "precautionary_measures": [
+          "அருகிலுள்ள அரசு ஆரம்ப சுகாதார நிலையத்திற்கு குழந்தைகளை அழைத்துச் செல்லவும்.",
+          "தடுப்பூசி அட்டை (MCP Card) கொண்டு வரவும்."
+        ]
+      },
+      "hi": {
+        "title": "राष्ट्रीय खसरा-रूबेला (एमआर) विशेष टीकाकरण अभियान",
+        "summary": "स्वास्थ्य एवं परिवार कल्याण मंत्रालय द्वारा 9 माह से 5 वर्ष तक के सभी बच्चों के लिए राष्ट्रव्यापी अतिरिक्त टीकाकरण अभियान शुरू।",
+        "content": "खसरा और रूबेला जैसी घातक बीमारियों से बचाव के लिए सभी सरकारी प्राथमिक स्वास्थ्य केंद्रों और आंगनबाड़ी केंद्रों पर निःशुल्क टीका लगाया जा रहा है।",
+        "precautionary_measures": [
+          "अपने बच्चे का टीकाकरण कार्ड अवश्य साथ लाएं।",
+          "यह टीका पूर्णतः सुरक्षित और जीवन रक्षक है।"
+        ]
+      },
+      "ml": {
+        "title": "ദേശീയ മീസിൽസ്-റൂബെല്ല പ്രതിരോധ കുത്തിവയ്പ്പ് കാമ്പയിൻ",
+        "summary": "9 മാസം മുതൽ 5 വയസ്സ് വരെയുള്ള കുട്ടികൾക്കായി കേന്ദ്ര ആരോഗ്യ മന്ത്രാലയത്തിന്റെ സൗജന്യ വാക്സിനേഷൻ ഡ്രൈവ്.",
+        "content": "എല്ലാ പ്രാഥമിക ആരോഗ്യ കേന്ദ്രങ്ങളിലും അംഗൻവാടികളിലും വാക്സിൻ ലഭ്യമാണ്.",
+        "precautionary_measures": [
+          "കുട്ടികൾക്ക് മുൻപ് വാക്സിൻ എടുത്തിട്ടുണ്ടെങ്കിലും ഈ ഡോസ് എടുക്കാവുന്നതാണ്."
+        ]
+      },
+      "te": {
+        "title": "జాతీయ తట్టు-రుబెల్లా (MR) ఉచిత టీకా ప్రచారం",
+        "summary": "9 నెలల నుండి 5 సంవత్సరాల పిల్లలకు కేంద్ర ఆరోగ్య మంత్రిత్వ శాఖ ఆధ్వర్యంలో ఉచిత టీకా పంపిణీ.",
+        "content": "అన్ని అంగన్‌వాడీ మరియు ప్రభుత్వ ప్రాథమిక ఆరోగ్య కేంద్రాలలో టీకాలు ఉచితంగా ఇవ్వబడుతున్నాయి.",
+        "precautionary_measures": [
+          "మీ పిల్లల ఆరోగ్య కార్డును తప్పనిసరిగా తీసుకురండి."
+        ]
+      },
+      "kn": {
+        "title": "ರಾಷ್ಟ್ರೀಯ ದಡಾರ-ರೂಬೆಲ್ಲಾ (MR) ಉಚಿತ ಲಸಿಕಾ ಅಭಿಯಾನ",
+        "summary": "9 ತಿಂಗಳಿಂದ 5 ವರ್ಷದೊಳಗಿನ ಎಲ್ಲಾ ಮಕ್ಕಳಿಗೆ ಕೇಂದ್ರ ಆರೋಗ್ಯ ಸಚಿವಾಲಯದಿಂದ ಉಚಿತ ಲಸಿಕಾ ಸೌಲಭ್ಯ.",
+        "content": "ಎಲ್ಲಾ ಸರ್ಕಾರಿ ಆಸ್ಪತ್ರೆಗಳು ಮತ್ತು ಅಂಗನವಾಡಿ ಕೇಂದ್ರಗಳಲ್ಲಿ ಲಸಿಕೆ ಲಭ್ಯವಿದೆ.",
+        "precautionary_measures": [
+          "ಲಸಿಕಾ ಕಾರ್ಡ್ ತೆಗೆದುಕೊಂಡು ಬನ್ನಿ."
+        ]
+      }
+    },
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "National Universal Immunization Programme (UIP) Division",
+      "source_authority_tier": "MINISTRY_OF_HEALTH_AND_FAMILY_WELFARE",
+      "bulletin_hash": "sha256-mohfw-mr-20260915-imm08"
+    }
+  },
+  {
+    "id": "66666666-6666-4666-a666-666666666666",
+    "title": "Seasonal Cholera & Enteric Water Safety Caution",
+    "summary": "National Centre for Disease Control advises strict water purification and food safety protocols in flood-receding coastal districts.",
+    "content": "The National Centre for Disease Control (NCDC) and state epidemiologists have flagged an uptick in acute diarrheal illness clusters following localized flood recessions. Contaminated shallow tube-wells and unregulated food vendors have been identified as primary transmission vectors for Vibrio cholerae. Municipal health departments have commenced door-to-door chlorine tablet distribution and rapid ORS depot replenishment.",
+    "category": "food_water_safety",
+    "severity": "HIGH",
+    "status": "ACTIVE",
+    "source_name": "National Centre for Disease Control (NCDC)",
+    "source_url": "https://ncdc.gov.in/advisories/water-borne-infections-gangetic-belt",
+    "source_reference_id": "NCDC/EPI/2026/07",
+    "issued_at": "2026-09-29T11:00:00Z",
+    "valid_from": "2026-09-29T11:00:00Z",
+    "valid_until": "2026-10-31T23:59:59Z",
+    "country": "India",
+    "state": "West Bengal",
+    "district": "Kolkata",
+    "city": "Kolkata",
+    "locality": "Kolkata & South 24 Parganas Delta",
+    "latitude": 22.5726,
+    "longitude": 88.3639,
+    "affected_radius_km": 45.0,
+    "symptoms": [
+      "Sudden onset of profuse, painless watery diarrhea ('rice-water stools')",
+      "Frequent vomiting without substantial fever",
+      "Rapid dehydration, sunken eyes, dry tongue, and skin tenting",
+      "Severe painful muscle cramps in legs and abdomen due to electrolyte depletion",
+      "Hypovolemic shock and lethargy in untreated pediatric cases"
+    ],
+    "precautionary_measures": [
+      "Drink strictly boiled (minimum 1 minute rolling boil) or certified chlorinated water; avoid unfiltered tap water.",
+      "Prepare and drink Oral Rehydration Salts (ORS) solution immediately upon the first loose stool.",
+      "Wash hands thoroughly with soap and clean water before cooking, eating, or feeding children, and after defecation.",
+      "Refrain from consuming cut fruits, raw salads, and unsealed iced drinks from street kiosks.",
+      "If vomiting prevents oral fluid retention, transport the patient immediately to a medical facility for intravenous fluid resuscitation."
+    ],
+    "helpline_numbers": ["1075", "108"],
+    "translations": {
+      "hi": {
+        "title": "मौसमी हैजा एवं जल-जनित संक्रामक रोग नियंत्रण परामर्श",
+        "summary": "राष्ट्रीय रोग नियंत्रण केंद्र (एनसीडीसी) ने बाढ़ प्रभावित क्षेत्रों में पेयजल स्वच्छता और हैजा रोकथाम के निर्देश दिए हैं।",
+        "content": "उबला हुआ या क्लोरीनयुक्त पानी ही पिएं। दस्त या उल्टी शुरू होने पर तुरंत ओआरएस का घोल लें और नजदीकी स्वास्थ्य केंद्र जाएं।",
+        "precautionary_measures": [
+          "पानी को कम से कम एक मिनट तक उबालकर ही पिएं।",
+          "कच्चे कटे फल और असुरक्षित पेय पदार्थों से परहेज करें।"
+        ]
+      }
+    },
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "NCDC Division of Epidemiology and Water-Borne Diseases",
+      "source_authority_tier": "NATIONAL_DISEASE_CONTROL_AGENCY",
+      "bulletin_hash": "sha256-ncdc-chol-20260929-epi07"
+    }
+  },
+  {
+    "id": "77777777-7777-4777-a777-777777777777",
+    "title": "Chikungunya & Joint Pain Surveillance Advisory",
+    "summary": "Integrated Disease Surveillance Programme (IDSP) alerts healthcare providers on atypical arthritic presentations of Chikungunya.",
+    "content": "IDSP surveillance units in Hyderabad and Ranga Reddy districts report clustered presentations of acute febrile polyarthralgia consistent with Chikungunya virus circulation. While rarely fatal, Chikungunya can induce prolonged, severe joint disability lasting weeks to months, particularly in older adults. Primary care practitioners are advised to utilize RT-PCR or IgM ELISA for confirmatory diagnosis and emphasize aggressive physiotherapy post-acute phase.",
+    "category": "infectious_disease",
+    "severity": "MODERATE",
+    "status": "ACTIVE",
+    "source_name": "Integrated Disease Surveillance Programme (IDSP)",
+    "source_url": "https://idsp.nic.in/state-bulletin/telangana-vector-2026",
+    "source_reference_id": "IDSP/TS/2026/11",
+    "issued_at": "2026-09-25T10:00:00Z",
+    "valid_from": "2026-09-25T10:00:00Z",
+    "valid_until": "2026-10-31T23:59:59Z",
+    "country": "India",
+    "state": "Telangana",
+    "district": "Hyderabad",
+    "city": "Hyderabad",
+    "locality": "Greater Hyderabad Municipal Corporation",
+    "latitude": 17.3850,
+    "longitude": 78.4867,
+    "affected_radius_km": 30.0,
+    "symptoms": [
+      "Abrupt onset of high fever accompanied by chills",
+      "Severe, debilitating joint pain predominantly affecting hands, wrists, ankles, and feet",
+      "Swelling of small joints with morning stiffness",
+      "Maculopapular rash on trunk and limbs",
+      "Extreme fatigue and backache"
+    ],
+    "precautionary_measures": [
+      "Protect against daytime mosquito bites using indoor aerosol repellents and long clothing.",
+      "Rest adequately and ensure generous fluid intake during the acute febrile stage.",
+      "Take Paracetamol for fever and pain relief; strictly avoid Aspirin until dengue is formally excluded.",
+      "Consult a physician for graduated physical therapy if joint stiffness persists into subacute weeks."
+    ],
+    "helpline_numbers": ["104", "108"],
+    "translations": {
+      "te": {
+        "title": "చికున్‌గున్యా మరియు కీళ్ల నొప్పుల వ్యాధి నియంత్రణ సలహా",
+        "summary": "హైదరాబాద్ మరియు పరిసర ప్రాంతాలలో చికున్‌గున్యా వ్యాప్తి నివారణకు ఆరోగ్య శాఖ చర్యలు ప్రారంభించింది.",
+        "content": "దోమ కాటు ద్వారా ఈ వైరస్ వ్యాపిస్తుంది. తీవ్రమైన జ్వరం మరియు కీళ్ల నొప్పులు ఉన్నట్లయితే వెంటనే వైద్యుడిని సంప్రదించండి.",
+        "precautionary_measures": [
+          "దోమలు వృద్ధి చెందకుండా ఇంటి చుట్టుపక్కల నీరు నిల్వ ఉండకుండా చూసుకోండి.",
+          "డాక్టర్ సలహా లేకుండా నొప్పి నివారణ మందులు వాడవద్దు."
+        ]
+      }
+    },
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "Telangana State IDSP Surveillance Cell",
+      "source_authority_tier": "INTEGRATED_SURVEILLANCE_NETWORK",
+      "bulletin_hash": "sha256-idsp-ts-20260925-v11"
+    }
+  },
+  {
+    "id": "88888888-8888-4888-a888-888888888888",
+    "title": "Historical Influenza H1N1 Seasonal Surge (Archived Surveillance Bulletin)",
+    "summary": "Archived epidemiological summary of the 2025 winter influenza season with containment completion certificate.",
+    "content": "The National Centre for Disease Control records the formal closure of the winter 2025 Influenza A (H1N1) surveillance period across the Mumbai metropolitan area. All primary surveillance indicators have returned to baseline baseline endemic thresholds. This record is preserved in the epidemiological archive for longitudinal pattern analysis and historical trend modeling.",
+    "category": "seasonal_epidemic",
+    "severity": "MODERATE",
+    "status": "EXPIRED",
+    "source_name": "National Centre for Disease Control (NCDC)",
+    "source_url": "https://ncdc.gov.in/archives/h1n1-seasonal-flu-bulletin",
+    "source_reference_id": "NCDC/ARCHIVE/2025/12",
+    "issued_at": "2025-11-01T08:00:00Z",
+    "valid_from": "2025-11-01T08:00:00Z",
+    "valid_until": "2025-12-31T23:59:59Z",
+    "country": "India",
+    "state": "Maharashtra",
+    "district": "Mumbai",
+    "city": "Mumbai",
+    "locality": "Greater Mumbai",
+    "latitude": 19.0760,
+    "longitude": 72.8777,
+    "affected_radius_km": 30.0,
+    "symptoms": [
+      "Fever and cough",
+      "Sore throat and runny nose"
+    ],
+    "precautionary_measures": [
+      "Archived historical guidance: Annual influenza vaccination was recommended."
+    ],
+    "helpline_numbers": ["1075"],
+    "translations": {},
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "NCDC Respiratory Viral Disease Laboratory Archive",
+      "source_authority_tier": "NATIONAL_ARCHIVE",
+      "bulletin_hash": "sha256-ncdc-flu-20251101-arc12"
+    }
+  },
+  {
+    "id": "99999999-9999-4999-a999-999999999999",
+    "title": "Draft Heat Stress Contingency Guidelines for Industrial Workplaces",
+    "summary": "Internal administrative draft awaiting state inter-ministerial clearance before public syndication.",
+    "content": "This draft policy framework establishes mandatory cool-down intervals, shaded resting zones, and electrolyte replenishment provisions for industrial factories and construction sites during extreme temperature spikes in Tamil Nadu.",
+    "category": "public_health_advisory",
+    "severity": "LOW",
+    "status": "DRAFT",
+    "source_name": "Tamil Nadu Directorate of Public Health (TN-DPH)",
+    "source_url": "https://dph.tn.gov.in/drafts/heat-stress-contingency-plan",
+    "source_reference_id": "TN-DPH/DRAFT-2026/01",
+    "issued_at": "2026-10-01T10:00:00Z",
+    "valid_from": "2026-10-01T10:00:00Z",
+    "valid_until": null,
+    "country": "India",
+    "state": "Tamil Nadu",
+    "district": null,
+    "city": null,
+    "locality": null,
+    "latitude": 13.0827,
+    "longitude": 80.2707,
+    "affected_radius_km": null,
+    "symptoms": [],
+    "precautionary_measures": [],
+    "helpline_numbers": ["104"],
+    "translations": {},
+    "is_demo_data": true,
+    "provenance_audit": {
+      "verified_by": "TN-DPH Occupational Health Technical Committee",
+      "source_authority_tier": "INTERNAL_STATE_DRAFT",
+      "bulletin_hash": "sha256-dph-tn-draft-heatstress"
+    }
+  }
+]

@@ -228,6 +228,56 @@ export const api = {
     request<ApiGeocodeResult>(`/providers/geocode?query=${encodeURIComponent(query)}`, {
       method: "GET",
     }),
+
+  // Regional Health Alerts
+  searchAlerts: (params: {
+    query?: string;
+    lat?: number | null;
+    lon?: number | null;
+    state?: string;
+    district?: string;
+    city?: string;
+    category?: string;
+    severity?: string;
+    status?: string;
+    language?: string;
+    page?: number;
+    page_size?: number;
+  }) => {
+    const searchParams = new URLSearchParams();
+    if (params.query) searchParams.append("query", params.query);
+    if (params.lat !== undefined && params.lat !== null) searchParams.append("lat", params.lat.toString());
+    if (params.lon !== undefined && params.lon !== null) searchParams.append("lon", params.lon.toString());
+    if (params.state) searchParams.append("state", params.state);
+    if (params.district) searchParams.append("district", params.district);
+    if (params.city) searchParams.append("city", params.city);
+    if (params.category) searchParams.append("category", params.category);
+    if (params.severity) searchParams.append("severity", params.severity);
+    if (params.status) searchParams.append("status", params.status);
+    if (params.language) searchParams.append("language", params.language);
+    if (params.page) searchParams.append("page", params.page.toString());
+    if (params.page_size) searchParams.append("page_size", params.page_size.toString());
+
+    return request<ApiHealthAlertSearchResponse>(`/alerts/search?${searchParams.toString()}`, {
+      method: "GET",
+    });
+  },
+
+  getAlertDetail: (alertId: string, language?: string) => {
+    const searchParams = new URLSearchParams();
+    if (language) searchParams.append("language", language);
+    return request<ApiHealthAlertDetail>(`/alerts/${alertId}?${searchParams.toString()}`, {
+      method: "GET",
+    });
+  },
+
+  getAlertMetadata: () =>
+    request<ApiAlertMetadataResponse>("/alerts/meta/categories", { method: "GET" }),
+
+  syncCanonicalAlerts: (token: string) =>
+    request<{ status: string; message: string; stats: any }>("/alerts/sync", {
+      method: "POST",
+    }, token),
 };
 
 export interface ApiVerificationBadge {
@@ -372,4 +422,67 @@ export interface ApiGeocodeResult {
   provider: string;
   attribution: string;
 }
+
+export interface ApiFreshnessStatus {
+  status: "FRESH" | "RECENT" | "STALE" | "EXPIRED";
+  age_hours: number;
+  last_verified_at: string;
+  notice: string;
+}
+
+export interface ApiHealthAlertSummary {
+  id: string;
+  title: string;
+  summary: string;
+  category: string;
+  severity: "CRITICAL" | "HIGH" | "MODERATE" | "LOW" | "INFORMATIONAL";
+  status: "ACTIVE" | "EXPIRED" | "DRAFT" | "INFORMATIONAL";
+  source_name: string;
+  source_url: string;
+  source_reference_id?: string | null;
+  issued_at: string;
+  valid_from: string;
+  valid_until?: string | null;
+  country: string;
+  state?: string | null;
+  district?: string | null;
+  city?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  affected_radius_km?: number | null;
+  distance_km?: number | null;
+  freshness: ApiFreshnessStatus;
+  is_demo_data: boolean;
+}
+
+export interface ApiHealthAlertDetail extends ApiHealthAlertSummary {
+  content: string;
+  locality?: string | null;
+  symptoms: string[];
+  precautionary_measures: string[];
+  helpline_numbers: string[];
+  translations?: Record<string, any> | null;
+  provenance_audit?: Record<string, any> | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ApiHealthAlertSearchResponse {
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  items: ApiHealthAlertSummary[];
+  critical_active_count: number;
+  emergency_escalation?: ApiEmergencyEscalation | null;
+  applied_filters: Record<string, any>;
+  disclaimer: string;
+}
+
+export interface ApiAlertMetadataResponse {
+  categories: string[];
+  severities: string[];
+  statuses: string[];
+}
+
 

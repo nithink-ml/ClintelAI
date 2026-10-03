@@ -1,6 +1,7 @@
 """Database Base and all models registration for Alembic migrations."""
 
 from app.db.session import Base
+from app.models.alert import HealthAlert
 from app.models.audit_log import AuditLog
 from app.models.emergency_contact import EmergencyContact
 from app.models.preference import UserPreference
@@ -16,6 +17,7 @@ __all__ = [
     "DoctorAffiliation",
     "EmergencyContact",
     "Facility",
+    "HealthAlert",
     "Profile",
     "RefreshToken",
     "User",

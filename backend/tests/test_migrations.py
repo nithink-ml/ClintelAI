@@ -13,9 +13,9 @@ async def test_database_tables_and_alembic_head():
         # Check alembic version table
         version_res = await conn.execute(text("SELECT version_num FROM alembic_version;"))
         version = version_res.scalar()
-        assert version == "5715e8c21ca8"
+        assert version == "7c8910d5e6f1"
 
-        # Check required Phase 1 & Phase 3 tables exist
+        # Check required Phase 1, Phase 3 & Phase 4 tables exist
         tables_res = await conn.execute(
             text(
                 "SELECT table_name FROM information_schema.tables "
@@ -33,6 +33,7 @@ async def test_database_tables_and_alembic_head():
             "facilities",
             "doctors",
             "doctor_affiliations",
+            "health_alerts",
         }
         for tbl in required_tables:
             assert tbl in tables, f"Missing expected table {tbl} in database"

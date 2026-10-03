@@ -44,6 +44,24 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning(f"Provider seeder startup check skipped: {e}")
 
+    # Initialize Regional Health Alerts Seeder if database has no alerts yet
+    try:
+        from sqlalchemy import func, select
+
+        from app.alerts.seeder import HealthAlertSeeder
+        from app.db.session import AsyncSessionLocal
+        from app.models.alert import HealthAlert
+
+        async with AsyncSessionLocal() as session:
+            alert_count_res = await session.execute(select(func.count(HealthAlert.id)))
+            alert_cnt = alert_count_res.scalar() or 0
+            if alert_cnt == 0:
+                logger.info("No regional health alerts detected in database. Seeding canonical Phase 4 alerts...")
+                await HealthAlertSeeder.seed(db=session, force_reload=False)
+                logger.info("Phase 4 canonical alerts seeded successfully.")
+    except Exception as e:
+        logger.warning(f"Health alert seeder startup check skipped: {e}")
+
     yield
     logger.info(f"Shutting down {settings.PROJECT_NAME}")
 

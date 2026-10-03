@@ -1,0 +1,198 @@
+[
+  {
+    "id": "GEO-ALERT-01",
+    "category": "geographic_matching",
+    "description": "Spatial proximity search at Chennai (13.0604, 80.2496) matches Chennai Dengue alert and National scope alert",
+    "params": {
+      "lat": 13.0604,
+      "lon": 80.2496,
+      "status": "ACTIVE"
+    },
+    "expected": {
+      "min_results": 2,
+      "contains_title": "Dengue",
+      "contains_national": true
+    }
+  },
+  {
+    "id": "GEO-ALERT-02",
+    "category": "geographic_matching",
+    "description": "Spatial proximity search at Kozhikode (11.2588, 75.7804) matches Nipah virus critical alert and National alert",
+    "params": {
+      "lat": 11.2588,
+      "lon": 75.7804,
+      "status": "ACTIVE"
+    },
+    "expected": {
+      "min_results": 2,
+      "contains_title": "Nipah",
+      "contains_national": true
+    }
+  },
+  {
+    "id": "GEO-ALERT-03",
+    "category": "geographic_matching",
+    "description": "Spatial proximity search at Bengaluru (12.9716, 77.5946) matches Heatwave alert and National alert",
+    "params": {
+      "lat": 12.9716,
+      "lon": 77.5946,
+      "status": "ACTIVE"
+    },
+    "expected": {
+      "min_results": 2,
+      "contains_title": "Heatwave",
+      "contains_national": true
+    }
+  },
+  {
+    "id": "GEO-ALERT-04",
+    "category": "geographic_matching",
+    "description": "Spatial proximity search at Delhi (28.6139, 77.2090) matches Air Quality AQI alert and National alert",
+    "params": {
+      "lat": 28.6139,
+      "lon": 77.2090,
+      "status": "ACTIVE"
+    },
+    "expected": {
+      "min_results": 2,
+      "contains_title": "Air Quality",
+      "contains_national": true
+    }
+  },
+  {
+    "id": "SCOPE-NAT-01",
+    "category": "national_propagation",
+    "description": "National scope alert (ALL_INDIA) propagates to all regional search queries regardless of state",
+    "params": {
+      "state": "Tamil Nadu"
+    },
+    "expected": {
+      "min_results": 2,
+      "contains_title": "Measles-Rubella"
+    }
+  },
+  {
+    "id": "CAT-INFECT-01",
+    "category": "category_filtering",
+    "description": "Category filter for infectious_disease returns Dengue and Chikungunya alerts",
+    "params": {
+      "category": "infectious_disease"
+    },
+    "expected": {
+      "min_results": 2,
+      "all_category_match": "infectious_disease"
+    }
+  },
+  {
+    "id": "CAT-AIR-01",
+    "category": "category_filtering",
+    "description": "Category filter for air_quality returns PM2.5 Severe Smog bulletin",
+    "params": {
+      "category": "air_quality"
+    },
+    "expected": {
+      "min_results": 1,
+      "all_category_match": "air_quality"
+    }
+  },
+  {
+    "id": "CAT-HEAT-01",
+    "category": "category_filtering",
+    "description": "Category filter for heatwave returns high temperature health directive",
+    "params": {
+      "category": "heatwave"
+    },
+    "expected": {
+      "min_results": 1,
+      "all_category_match": "heatwave"
+    }
+  },
+  {
+    "id": "SEV-CRIT-01",
+    "category": "severity_filtering",
+    "description": "Severity filter for CRITICAL alerts returns Nipah containment advisory",
+    "params": {
+      "severity": "CRITICAL"
+    },
+    "expected": {
+      "min_results": 1,
+      "all_severity_match": "CRITICAL"
+    }
+  },
+  {
+    "id": "SEV-HIGH-01",
+    "category": "severity_filtering",
+    "description": "Severity filter for HIGH alerts returns Dengue, Heatwave, AQI, and Cholera alerts",
+    "params": {
+      "severity": "HIGH"
+    },
+    "expected": {
+      "min_results": 3,
+      "all_severity_match": "HIGH"
+    }
+  },
+  {
+    "id": "STAT-ACTIVE-01",
+    "category": "status_lifecycle",
+    "description": "Active status query strictly excludes DRAFT and EXPIRED alerts",
+    "params": {
+      "status": "ACTIVE"
+    },
+    "expected": {
+      "min_results": 5,
+      "all_status_match": "ACTIVE",
+      "excludes_title": "Draft"
+    }
+  },
+  {
+    "id": "STAT-EXP-01",
+    "category": "status_lifecycle",
+    "description": "Query for EXPIRED status returns archived seasonal influenza advisory",
+    "params": {
+      "status": "EXPIRED"
+    },
+    "expected": {
+      "min_results": 1,
+      "all_status_match": "EXPIRED"
+    }
+  },
+  {
+    "id": "LANG-TA-01",
+    "category": "multilingual_fidelity",
+    "description": "Query with language='ta' delivers Tamil translated titles and localized guidance",
+    "params": {
+      "city": "Chennai",
+      "language": "ta"
+    },
+    "expected": {
+      "min_results": 1,
+      "contains_tamil_title": true
+    }
+  },
+  {
+    "id": "EMERG-ALERT-01",
+    "category": "emergency_routing",
+    "description": "User search query containing crushing chest pain triggers clinical emergency escalation",
+    "params": {
+      "query": "sudden crushing chest pain radiating to left arm and neck"
+    },
+    "expected": {
+      "emergency_triggered": true,
+      "emergency_level": "CRITICAL",
+      "contains_112": true
+    }
+  },
+  {
+    "id": "PROV-ALERT-01",
+    "category": "provenance_and_guardrail",
+    "description": "All returned alerts contain trusted government source, validity dates, freshness status, and Demo Guardrail flags",
+    "params": {
+      "page_size": 10
+    },
+    "expected": {
+      "provenance_complete": true,
+      "all_demo_flagged": true,
+      "freshness_computed": true
+    }
+  }
+]
