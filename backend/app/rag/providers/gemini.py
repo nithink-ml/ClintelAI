@@ -57,7 +57,7 @@ class GeminiProvider(BaseLLMProvider):
     def __init__(
         self,
         api_key: str | None = None,
-        model: str = "gemini-1.5-flash",
+        model: str = "gemini-flash-latest",
         fallback_enabled: bool | None = None,
     ):
         self.api_key = api_key if api_key is not None else settings.GEMINI_API_KEY
@@ -203,7 +203,7 @@ class GeminiProvider(BaseLLMProvider):
         }
 
         try:
-            with httpx.Client(timeout=10.0) as client:
+            with httpx.Client(timeout=20.0) as client:
                 res = client.post(
                     f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent",
                     params=params,
