@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
         async with AsyncSessionLocal() as session:
             count_res = await session.execute(select(func.count(Facility.id)))
             fac_count = count_res.scalar() or 0
-            if fac_count == 0:
+            if settings.SEED_DEMO_DATA and fac_count == 0:
                 logger.info("No healthcare providers detected in database. Seeding canonical Phase 3 providers...")
                 await ProviderSeeder.seed(db=session, force_reload=False)
                 logger.info("Phase 3 canonical providers seeded successfully.")
@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI):
         async with AsyncSessionLocal() as session:
             alert_count_res = await session.execute(select(func.count(HealthAlert.id)))
             alert_cnt = alert_count_res.scalar() or 0
-            if alert_cnt == 0:
+            if settings.SEED_DEMO_DATA and alert_cnt == 0:
                 logger.info("No regional health alerts detected in database. Seeding canonical Phase 4 alerts...")
                 await HealthAlertSeeder.seed(db=session, force_reload=False)
                 logger.info("Phase 4 canonical alerts seeded successfully.")

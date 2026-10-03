@@ -2,7 +2,7 @@
 
 import json
 
-from pydantic import field_validator
+from pydantic import field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -61,9 +61,55 @@ class Settings(BaseSettings):
     MAPBOX_ACCESS_TOKEN: str = ""
     GOOGLE_MAPS_API_KEY: str = ""
 
+    # Database Connection Pool Parameters
+    DB_POOL_SIZE: int = 10
+    DB_MAX_OVERFLOW: int = 20
+    DB_POOL_TIMEOUT: int = 30
+    DB_POOL_RECYCLE: int = 1800
+
+    # API Rate Limiting & Abuse Protection
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_DEFAULT_PER_MINUTE: int = 60
+    RATE_LIMIT_AUTH_PER_MINUTE: int = 15
+    RATE_LIMIT_RAG_PER_MINUTE: int = 30
+
+    # Demo Data Ingestion Controls
+    SEED_DEMO_DATA: bool = True
+
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", case_sensitive=True, extra="ignore"
     )
+
+    @model_validator(mode="after")
+    def validate_production_environment(self) -> "Settings":
+        """Enforces strict production security constraints and forbids insecure defaults."""
+        if self.ENVIRONMENT.lower() == "production":
+            if self.DEBUG:
+                raise ValueError("DEBUG must be False in production environments.")
+
+            insecure_keys = {
+                "insecure-dev-secret-key-change-me-in-production-minimum-32-chars",
+                "secret",
+                "changeme",
+                "password",
+            }
+            if self.SECRET_KEY in insecure_keys or len(self.SECRET_KEY) < 32:
+                raise ValueError(
+                    "SECRET_KEY is insecure or too short for production. "
+                    "Must be an unpredictable, cryptographically random secret of at least 32 characters."
+                )
+
+            if self.LLM_FALLBACK_ENABLED:
+                raise ValueError(
+                    "LLM_FALLBACK_ENABLED must be False in production to prevent silent mock substitutions."
+                )
+
+            if isinstance(self.CORS_ORIGINS, list) and ("*" in self.CORS_ORIGINS):
+                raise ValueError(
+                    "Wildcard CORS origin ('*') is strictly forbidden in production when allow_credentials=True."
+                )
+
+        return self
 
 
 settings = Settings()

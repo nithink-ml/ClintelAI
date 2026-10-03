@@ -10,7 +10,9 @@ from httpx import ASGITransport, AsyncClient
 
 from app.alerts.service import HealthAlertService
 from app.api.deps import get_current_user
+from app.db.session import AsyncSessionLocal
 from app.main import app
+from app.models.alert import HealthAlert
 from app.models.user import User
 
 
@@ -376,6 +378,12 @@ async def test_alerts_rbac_protection():
             assert sync_admin.json()["status"] == "success"
         finally:
             app.dependency_overrides.pop(get_current_user, None)
+            async with AsyncSessionLocal() as cleanup_session:
+                from sqlalchemy import delete
+                await cleanup_session.execute(
+                    delete(HealthAlert).where(HealthAlert.title.like("%Admin Tested%"))
+                )
+                await cleanup_session.commit()
 
 
 @pytest.mark.asyncio

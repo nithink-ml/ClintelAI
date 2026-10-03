@@ -16,13 +16,21 @@ Base = declarative_base()
 # Primary Engine (PostgreSQL PostGIS in prod/docker, or SQLite in local dev)
 primary_url = settings.DATABASE_URL
 is_testing = "pytest" in sys.modules or any("pytest" in arg for arg in sys.argv)
-engine = create_async_engine(
-    primary_url,
-    echo=False,
-    future=True,
-    pool_pre_ping=True,
-    poolclass=NullPool if is_testing else AsyncAdaptedQueuePool,
-)
+engine_kwargs: dict = {
+    "echo": False,
+    "future": True,
+    "pool_pre_ping": True,
+}
+if is_testing:
+    engine_kwargs["poolclass"] = NullPool
+elif "sqlite" not in primary_url:
+    engine_kwargs["poolclass"] = AsyncAdaptedQueuePool
+    engine_kwargs["pool_size"] = settings.DB_POOL_SIZE
+    engine_kwargs["max_overflow"] = settings.DB_MAX_OVERFLOW
+    engine_kwargs["pool_timeout"] = settings.DB_POOL_TIMEOUT
+    engine_kwargs["pool_recycle"] = settings.DB_POOL_RECYCLE
+
+engine = create_async_engine(primary_url, **engine_kwargs)
 
 AsyncSessionLocal = async_sessionmaker(
     bind=engine,

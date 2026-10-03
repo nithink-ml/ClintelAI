@@ -6,7 +6,9 @@ from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db, log_audit_event, require_role
+from app.core.config import settings
 from app.core.logging import logger
+from app.core.rate_limit import RateLimiter
 from app.models.user import User
 from app.rag.models import (
     IngestionReport,
@@ -35,6 +37,15 @@ def sanitize_query_for_audit(query: str) -> str:
         "and generates a grounded response with structured inline citations and safety screening. "
         "Note: Uses a curated, versioned guideline dataset, not a real-time medical feed."
     ),
+    dependencies=[
+        Depends(
+            RateLimiter(
+                requests=settings.RATE_LIMIT_RAG_PER_MINUTE,
+                window_seconds=60,
+                prefix="rag_query",
+            )
+        )
+    ],
 )
 async def query_clinical_knowledge(
     request_data: RAGQueryRequest,

@@ -1,0 +1,180 @@
+name: ClintelAI CI/CD & Production Security Verification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ============================================================================
+  # 1. Backend Quality, Security & Automated Regression
+  # ============================================================================
+  backend-quality-and-security:
+    name: Backend Quality & Regression Suite
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: clintelai
+          POSTGRES_PASSWORD: clintelai_password
+          POSTGRES_DB: clintelai_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: Run Ruff Code Linter & Style Enforcement
+        run: ruff check backend/
+
+      - name: Python Supply Chain Vulnerability Audit (pip-audit)
+        run: pip-audit --timeout 60
+
+      - name: Run Complete Pytest Regression & Adversarial Safety Suite
+        env:
+          DATABASE_URL: postgresql+asyncpg://clintelai:clintelai_password@localhost:5432/clintelai_db
+          REDIS_URL: redis://localhost:6379/0
+          LLM_PROVIDER: mock
+          LLM_FALLBACK_ENABLED: "false"
+        run: |
+          pytest -v --cov=app --cov-report=term-missing backend/tests/
+
+      - name: Run Production Pre-Flight Verification Script
+        env:
+          DATABASE_URL: postgresql+asyncpg://clintelai:clintelai_password@localhost:5432/clintelai_db
+          REDIS_URL: redis://localhost:6379/0
+          LLM_PROVIDER: mock
+          LLM_FALLBACK_ENABLED: "false"
+        run: python scripts/verify_production_readiness.py
+
+  # ============================================================================
+  # 2. Frontend Quality, Build & Production Dependency Isolation
+  # ============================================================================
+  frontend-quality-and-build:
+    name: Frontend Quality & Production Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Production Runtime Dependency Audit (npm audit --omit=dev)
+        working-directory: frontend
+        run: npm audit --omit=dev
+
+      - name: Run ESLint Linter
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Run TypeScript Strict Type Check
+        working-directory: frontend
+        run: npm run type-check
+
+      - name: Run Frontend Component & Guardrail Tests
+        working-directory: frontend
+        run: npm test
+
+      - name: Compile Optimized Production Build (next build)
+        working-directory: frontend
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"
+        run: npm run build
+
+  # ============================================================================
+  # 3. Docker Production Hardening & Container Security
+  # ============================================================================
+  docker-production-hardening:
+    name: Docker Production Image Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Hardened Backend Container Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infrastructure/docker/backend.Dockerfile
+          load: true
+          tags: clintelai-backend:prod
+
+      - name: Verify Backend Non-Root User & Liveness Probe
+        run: |
+          USER_ID=$(docker run --rm clintelai-backend:prod whoami)
+          echo "Backend container runs as: ${USER_ID}"
+          if [ "${USER_ID}" != "appuser" ]; then
+            echo "ERROR: Backend container must run as non-root appuser!"
+            exit 1
+          fi
+
+      - name: Build Hardened Frontend Container Image (Isolated Multi-Stage)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infrastructure/docker/frontend.Dockerfile
+          load: true
+          tags: clintelai-frontend:prod
+
+      - name: Verify Frontend Non-Root User & Absence of Dev Dependencies
+        run: |
+          FRONTEND_USER=$(docker run --rm clintelai-frontend:prod whoami)
+          echo "Frontend container runs as: ${FRONTEND_USER}"
+          if [ "${FRONTEND_USER}" != "nextjs" ]; then
+            echo "ERROR: Frontend container must run as non-root nextjs user!"
+            exit 1
+          fi
+
+          # Verify vulnerable build packages (braces, micromatch) are absent
+          docker run --rm clintelai-frontend:prod sh -c "
+            if [ -d node_modules/braces ] || [ -d node_modules/micromatch ]; then
+              echo 'ERROR: Build-time devDependencies found in production container image!'
+              exit 1
+            else
+              echo 'CONFIRMED: Vulnerable build packages completely excluded from production container.'
+            fi
+          "

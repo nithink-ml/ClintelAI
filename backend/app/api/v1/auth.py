@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.deps import get_current_user, get_db, log_audit_event
 from app.core.config import settings
 from app.core.logging import logger
+from app.core.rate_limit import RateLimiter
 from app.core.security import (
     create_access_token,
     create_refresh_token,
@@ -38,6 +39,15 @@ router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     summary="Register New User Account",
     description="Creates a new patient or user account, profile, and initial preferences.",
+    dependencies=[
+        Depends(
+            RateLimiter(
+                requests=settings.RATE_LIMIT_AUTH_PER_MINUTE,
+                window_seconds=60,
+                prefix="auth_register",
+            )
+        )
+    ],
 )
 async def register_user(
     payload: UserRegisterRequest,
@@ -124,6 +134,15 @@ async def register_user(
     status_code=status.HTTP_200_OK,
     summary="Authenticate User",
     description="Verifies user credentials and issues short-lived access and refresh tokens.",
+    dependencies=[
+        Depends(
+            RateLimiter(
+                requests=settings.RATE_LIMIT_AUTH_PER_MINUTE,
+                window_seconds=60,
+                prefix="auth_login",
+            )
+        )
+    ],
 )
 async def login_user(
     payload: UserLoginRequest,

@@ -27,6 +27,11 @@ yarn-error.log*
 .env
 .env*.local
 !.env.example
+!.env.production.example
+
+# Scratch & Backups
+scratch/
+backups/
 
 # Python
 __pycache__/

@@ -1,0 +1,205 @@
+services:
+  # ============================================================================
+  # Nginx Production Reverse Proxy & SSL Termination
+  # ============================================================================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: clintelai_nginx_prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infrastructure/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ssl_certs:/etc/nginx/ssl:ro
+      - certbot_www:/var/www/certbot:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - frontend_net
+      - backend_net
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1/healthz || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+
+  # ============================================================================
+  # ClintelAI FastAPI Backend (Multi-Worker, Non-Root)
+  # ============================================================================
+  backend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/backend.Dockerfile
+    container_name: clintelai_backend_prod
+    restart: always
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4", "--lifespan", "on"]
+    environment:
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      - REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379/0
+      - REDIS_FALLBACK_IN_MEMORY=false
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - LLM_PROVIDER=${LLM_PROVIDER:-gemini}
+      - LLM_FALLBACK_ENABLED=false
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - SECRET_KEY=${SECRET_KEY}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - RATE_LIMIT_ENABLED=true
+      - SEED_DEMO_DATA=false
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    networks:
+      - backend_net
+      - db_net
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthz"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ============================================================================
+  # ClintelAI Next.js Frontend (Production Runner, Multi-Stage Isolated)
+  # ============================================================================
+  frontend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/frontend.Dockerfile
+    container_name: clintelai_frontend_prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=/api/v1
+      - NEXT_PUBLIC_ENABLE_DEMO_DATA=false
+    networks:
+      - frontend_net
+      - backend_net
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1024M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ============================================================================
+  # PostgreSQL 16 with PostGIS Spatial Extensions
+  # ============================================================================
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: clintelai_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    networks:
+      - db_net
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # Redis 7 with Persistence & Authentication
+  # ============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: clintelai_redis_prod
+    restart: always
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}", "--appendonly", "yes", "--maxmemory", "384mb", "--maxmemory-policy", "allkeys-lru"]
+    volumes:
+      - redis_prod_data:/data
+    networks:
+      - db_net
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD} ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================================
+  # ChromaDB Vector Store
+  # ============================================================================
+  chromadb:
+    image: chromadb/chroma:0.5.5
+    container_name: clintelai_chroma_prod
+    restart: always
+    volumes:
+      - chroma_prod_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=FALSE
+    networks:
+      - db_net
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1536M
+
+volumes:
+  postgres_prod_data:
+    driver: local
+  redis_prod_data:
+    driver: local
+  chroma_prod_data:
+    driver: local
+  ssl_certs:
+    driver: local
+  certbot_www:
+    driver: local
+
+networks:
+  frontend_net:
+    driver: bridge
+  backend_net:
+    driver: bridge
+  db_net:
+    driver: bridge
+    internal: true
